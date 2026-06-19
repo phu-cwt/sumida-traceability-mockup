@@ -1,0 +1,1655 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Sumida Traceability System — Mock UI</title>
+<meta name="viewport" content="width=1280">
+<style>
+  :root{
+    --bg:#ECECEC;
+    --panel:#F6F6F6;
+    --line:#1B1B1B;
+    --line-soft:#9B9B9B;
+    --text:#1B1B1B;
+    --muted:#6B6B6B;
+    --running:#7CC6E6;
+    --running-strong:#39A6D6;
+    --lastrun:#C2C2C2;
+    --ok:#2ECC40;
+    --ok-soft:#A7E6A2;
+    --ng:#E63946;
+    --ng-soft:#F4A6AB;
+    --warn:#F2C014;
+    --warn-soft:#FFE36A;
+    --stop:#9aa0a6;
+    --dark:#1F1F1F;
+    --pink:#E89AA3;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:"Segoe UI","Noto Sans",Arial,sans-serif;font-size:14px}
+
+  /* ===== SCROLLBAR (mặc định mảnh; rê chuột vào vùng cuộn mới dày lên — giống 25T01) ===== */
+  *{scrollbar-width:thin;scrollbar-color:#bdbdbd #ffffff}
+  ::-webkit-scrollbar{width:14px;height:14px}
+  ::-webkit-scrollbar-track{background:#fff}
+  ::-webkit-scrollbar-thumb{background:#bdbdbd;border:5px solid #fff;border-radius:8px}   /* mặc định: mảnh */
+  /* hover vào vùng cuộn → thumb dày lên */
+  .table-scroll:hover::-webkit-scrollbar-thumb,
+  .page:hover::-webkit-scrollbar-thumb,
+  .timeline:hover::-webkit-scrollbar-thumb,
+  .modal:hover::-webkit-scrollbar-thumb{border-width:2px;background:#9a9a9a}
+  ::-webkit-scrollbar-button{display:none;width:0;height:0}
+  ::-webkit-scrollbar-corner{background:#fff}
+  .app{height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+  /* ===== HEADER (giữ nguyên style file gốc) ===== */
+  .topbar{display:flex;align-items:center;background:var(--bg);padding:0 14px;gap:10px;height:66px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;line-height:1}
+  .brand-nittoku-box{display:inline-flex;align-items:center;justify-content:center}
+  .brand-nittoku{height:35px;width:auto;display:block;mix-blend-mode:multiply}
+  .login-logo{height:90px;width:auto;display:block;margin:0 auto 4px}
+  .brand .sysname{font-size:45px;color:#1B1B1B;font-weight:900;letter-spacing:.2px;line-height:1}
+  .spacer{flex:1}
+  #gear-btn:disabled{opacity:.35;cursor:default}
+  /* Hover khung cho 4 nút header — khung xanh vuông, các nút sát mép nhau (không bo) */
+  .hdr-actions{display:inline-flex;align-items:center;gap:0}
+  .hdr-ic{display:inline-flex;align-items:center;justify-content:center;width:40px;height:38px;padding:0;border:1px solid transparent;background:transparent;cursor:pointer;line-height:0;transition:background .1s,border-color .1s}
+  .hdr-ic:hover{background:#E8F0FE;border-color:#1E88E5}
+  .hdr-ic img{display:block;pointer-events:none}
+  .hdr-ic:focus,.hdr-ic:focus-visible{outline:none}
+  #gear-btn:disabled:hover{background:transparent;border-color:transparent}
+  .icon-btn{width:28px;height:28px;border-radius:4px;background:#1F1F1F;color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border:none;flex-shrink:0}
+  .icon-btn:hover{background:#3a3a3a}
+  .lang{display:flex;align-items:center;gap:4px;margin:0 8px}
+  .flag{width:28px;height:20px;border:1px solid #555;display:inline-block;cursor:pointer;border-radius:2px;overflow:hidden;position:relative;vertical-align:middle;flex-shrink:0}
+  .flag.vn{background:#DA251D}
+  .flag.vn::after{content:"★";position:absolute;color:#FFCD00;font-size:16px;line-height:20px;width:100%;text-align:center;top:-1px;left:0}
+  .flag.uk{background:#012169;background-image:
+      linear-gradient(to bottom right,transparent calc(50% - 1.2px),#fff calc(50% - 1.2px) calc(50% + 1.2px),transparent calc(50% + 1.2px)),
+      linear-gradient(to bottom left,transparent calc(50% - 1.2px),#fff calc(50% - 1.2px) calc(50% + 1.2px),transparent calc(50% + 1.2px)),
+      linear-gradient(#fff,#fff),
+      linear-gradient(90deg,#fff,#fff),
+      linear-gradient(to bottom right,transparent calc(50% - .8px),#C8102E calc(50% - .8px) calc(50% + .8px),transparent calc(50% + .8px)),
+      linear-gradient(#C8102E,#C8102E),
+      linear-gradient(90deg,#C8102E,#C8102E);
+    background-size:100% 100%,100% 100%,100% 26%,8% 100%,100% 100%,100% 14%,4% 100%;
+    background-position:center,center,center,center,center,center,center;
+    background-repeat:no-repeat}
+  .flag.active{outline:2px solid #1E88E5}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:0 10px;height:28px;border-radius:3px;font-weight:700;font-size:12px;color:#fff;background:#2ECC40;cursor:default;border:1px solid #1f7a26;flex-shrink:0;box-sizing:border-box}
+  .chip.bad{background:#E63946;border-color:#7d1f25}
+  .chip .led{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff}
+  .winctrl{display:flex;gap:12px;margin-left:6px;align-items:center}
+  .winctrl span{font-weight:900;font-size:20px;cursor:pointer;color:#111;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+  .winctrl .x{color:#E63946;font-size:22px}
+
+  /* ===== NAV TABS ===== */
+  .tabs{display:flex;background:#CFCFCF;border-bottom:1px solid #888}
+  .tab{padding:8px 16px;font-weight:600;cursor:pointer;color:#222;border-right:1px solid #aaa;display:flex;align-items:center;gap:6px}
+  .tab.active{background:var(--bg);border-top:3px solid #1E88E5;padding-top:5px}
+  .tab .badge{background:#E63946;color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;font-weight:700}
+  .tab.phase2{color:#888}
+  .tab.phase2 .badge{background:#8C8C8C}
+
+  /* ===== STATUS BAR (footer clock) ===== */
+  .statusbar{display:flex;align-items:center;gap:10px;height:26px;background:#1F1F1F;color:#cfcfcf;padding:0 14px;font-size:12px;border-top:1px solid #000}
+  .statusbar .sb-left{font-weight:600;letter-spacing:.3px}
+  .statusbar .spacer{flex:1}
+  .statusbar .sb-clock{font-family:Consolas,"SF Mono",monospace;font-weight:700;color:#fff}
+  .statusbar .sb-clock-ic{color:#cfcfcf;margin-left:6px;flex-shrink:0;display:block}
+
+  /* ===== INLINE NOTE / PHASE-2 BANNER ===== */
+  .note-suggest{background:#FFF8E1;border:1px solid #B8860B;color:#7a5800;padding:9px 14px;margin-bottom:12px;font-size:12px;display:flex;align-items:center;gap:10px}
+  .note-suggest .ic{font-size:16px;color:#B8860B;flex-shrink:0}
+  .src-note{font-size:11px;color:#8a8a8a;font-style:italic;margin:8px 2px 0;display:flex;gap:6px;align-items:flex-start}
+  .src-note b{color:#6a6a6a;font-style:normal}
+  .note-suggest b{color:#5e4400}
+  .phase2-banner{background:#E8EEF6;border:1px solid #1E88E5;color:#10406e;padding:11px 16px;margin-bottom:14px;font-size:13px;display:flex;align-items:center;gap:12px}
+  .phase2-banner .pill2{background:#1E88E5;color:#fff;font-weight:800;font-size:11px;padding:2px 9px;border-radius:10px;letter-spacing:.5px;flex-shrink:0}
+  .phase2-banner .preview{margin-left:auto;font-size:11px;color:#5b7493;font-style:italic;flex-shrink:0}
+
+  /* ===== PAGE ===== */
+  .page{flex:1;padding:14px 18px;display:none;min-height:0}
+  .page.active{display:flex;flex-direction:column;overflow:auto}
+  /* Chỉ vùng dữ liệu (rows) scroll, header/filter/footer cố định — giống DataGridView */
+  .table-scroll{flex:1;min-height:0;overflow:auto;border:1px solid #111}
+  .table-scroll .history-table{border:none}
+  .page-title{font-size:22px;font-weight:800;text-align:center;margin:0 0 14px;letter-spacing:.5px}
+  .back-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1F1F1F;color:#fff;cursor:pointer;border:none;margin-right:8px;font-weight:800}
+  .title-row{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:10px}
+  .title-row .back-btn{position:absolute;left:0}
+
+  /* ===== KPI BAR ===== */
+  .kpi-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;flex-shrink:0;background:#fff;border:2px solid #1B1B1B;padding:12px}
+  .kpi{background:#fff;border:1px solid #1B1B1B;border-radius:4px;padding:12px 14px;display:flex;flex-direction:column;gap:3px}
+  .kpi .lbl{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.5px}
+  .kpi .val{font-size:22px;font-weight:800}
+  .kpi.ok .val{color:#1E8A2E}
+  .kpi.ng .val{color:#C9272F}
+  .kpi.adj .val{color:#B8860B}
+  .kpi.yld .val{color:#1565C0}
+
+  /* ===== PLC GRID ===== */
+  .plc-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;align-content:start;flex-shrink:0}
+  .plc-card{background:#fff;border:1px solid #111;padding:12px;cursor:pointer;position:relative;min-width:0;min-height:165px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;transition:transform .1s}
+  .plc-card:hover{box-shadow:inset 0 0 0 2px #1E88E5}   /* viền xanh highlight — WinForms vẽ border xanh khi MouseEnter */
+  .plc-card.alarm{background:#FFEAEA;border-color:#C9272F}
+  .plc-card.stopped{background:#EFEFEF;color:#777}
+  .plc-card .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:4px}
+  .plc-card .pno{font-size:15px;font-weight:800}
+  .plc-card .stage{font-size:12px;color:#555;line-height:1.2;margin-top:2px}
+  .plc-card .led{width:14px;height:14px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok);flex-shrink:0;margin-top:2px}
+  .plc-card.alarm .led{background:var(--ng);box-shadow:0 0 6px var(--ng);animation:blink 1s infinite}
+  .plc-card.stopped .led{background:var(--stop);box-shadow:none}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .plc-card .nums{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-top:4px}
+  .plc-card .nums div{flex:1;text-align:center;padding:8px 4px;border:1px solid #ccc;background:#fafafa}
+  .plc-card .nums .v-ok{color:#1E8A2E;font-weight:800;font-size:22px;display:block;line-height:1.1}
+  .plc-card .nums .v-ng{color:#C9272F;font-weight:800;font-size:22px;display:block;line-height:1.1}
+  .plc-card .nums .v-adj{color:#B8860B;font-weight:800;font-size:22px;display:block;line-height:1.1}
+  .plc-card .case2d{font-family:Consolas,monospace;font-size:11px;color:#444;background:#F0F0F0;padding:4px 6px;border:1px dashed #999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ===== PLC DETAIL ===== */
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .detail-col{background:#fff;border:1px solid #111}
+  .detail-col h3{margin:0;padding:8px;text-align:center;font-size:14px;color:#fff}
+  .detail-col.running h3{background:var(--running-strong)}
+  .detail-col.lastrun h3{background:#8C8C8C}
+  .detail-col table{width:100%;border-collapse:collapse}
+  .detail-col td{padding:6px 10px;border-bottom:1px solid #ddd;font-size:13px}
+  .detail-col td:first-child{color:#444;width:45%;text-align:right;padding-right:14px}
+  .detail-col td:last-child{font-weight:600}
+  .v-ok-big{color:#1E8A2E;font-weight:800;font-size:18px}
+  .v-ng-big{color:#C9272F;font-weight:800;font-size:18px}
+  .v-adj-big{color:#B8860B;font-weight:800;font-size:18px}
+  .insp-section{margin-top:14px;background:#fff;border:1px solid #111}
+  .insp-section h3{margin:0;padding:8px;background:#1F1F1F;color:#fff;font-size:13px;text-align:center;letter-spacing:.5px}
+  .insp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #ddd}
+  .insp-cell{padding:8px 10px;border-right:1px solid #eee;border-bottom:1px solid #eee}
+  .insp-cell .lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.4px}
+  .insp-cell .val{font-size:18px;font-weight:800;color:#111}
+  .insp-cell .unit{font-size:11px;color:#666;margin-left:3px;font-weight:400}
+  .insp-cell.ng{background:#FFEAEA}
+  .insp-cell.ng .val{color:#C9272F}
+  .insp-cell.ok{background:#EAFBEA}
+  .insp-cell.ok .val{color:#1E8A2E}
+  /* Machine status cells (Connection / Run / Alarm) */
+  .ms-cell{padding:10px 12px;border-right:1px solid #eee;border-bottom:1px solid #eee;display:flex;flex-direction:column;gap:4px}
+  .ms-cell .lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.4px}
+  .ms-cell .val{font-size:16px;font-weight:800;color:#111;display:flex;align-items:center;gap:8px}
+  .ms-cell .led{width:11px;height:11px;border-radius:50%;background:#2ECC40;box-shadow:0 0 6px rgba(46,204,64,.6);flex-shrink:0}
+  .ms-cell.bad .led{background:#E63946;box-shadow:0 0 6px rgba(230,57,70,.7);animation:blink 1s infinite}
+  .ms-cell.stop .led{background:#888;box-shadow:none}
+  .ms-cell .sub{font-size:11px;color:#666}
+  .ms-cell.bad{background:#FFEAEA}
+  .ms-cell.bad .val{color:#C9272F}
+  /* Traceability code cards (MaterialLot / Carrier2D / WindingChuck2D / Base2D) */
+  .trace-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #ddd}
+  .trace-cell{padding:10px 12px;border-right:1px solid #eee;display:flex;flex-direction:column;gap:4px}
+  .trace-cell .lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.4px}
+  .trace-cell .val{font-size:14px;font-weight:700;color:#111;font-family:Consolas,"SF Mono",monospace;word-break:break-all}
+  .trace-cell.key{background:#FFF8DC;border-left:3px solid #B8860B}
+  .trace-cell.key .lbl{color:#B8860B}
+  .trace-cell .scan{font-size:10px;color:#888;margin-top:2px}
+  .trend-box{margin-top:14px;background:#fff;border:1px solid #111;padding:10px}
+  .trend-box h3{margin:0 0 8px;font-size:13px;text-align:center;background:#1F1F1F;color:#fff;padding:6px;letter-spacing:.5px}
+  .trend-canvas{height:160px;width:100%}
+
+  /* ===== HISTORY ===== */
+  .filter-row{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;margin-bottom:10px;align-items:end}
+  .filter-row label{display:flex;flex-direction:column;font-size:12px;color:#333;gap:3px}
+  .filter-row input,.filter-row select{padding:6px 8px;border:1px solid #111;font-size:13px;background:#fff;border-radius:14px}
+  .btn{background:#1F1F1F;color:#fff;border:none;padding:8px 22px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px}
+  .btn:hover{background:#3a3a3a}
+  .btn.danger{background:var(--pink);color:#fff}
+  .btn.danger:hover{background:#d97380}
+  .history-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #111}
+  .history-table th{background:#CFCFCF;color:#111;padding:8px;font-size:12px;border:1px solid #9a9a9a;text-align:center;font-weight:700;position:sticky;top:0;z-index:2}
+  .history-table th:first-child{background:#1E88E5;color:#fff}
+  .history-table td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:12px}
+  .row-ok{background:#7CD986}
+  .row-ng{background:#F4A6AB}
+  .row-adj{background:#FFD55A}
+  .history-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+  .legend{display:flex;gap:18px;font-size:12px;align-items:flex-end}
+  .legend>span{display:inline-flex;align-items:flex-end;gap:4px;line-height:1}
+  .legend .sw{width:14px;height:14px;display:inline-block;border:1px solid #444}
+  .legend .ok{background:#7CD986}.legend .ng{background:#F4A6AB}.legend .adj{background:#FFD55A}
+
+  /* ===== SUB-NAV (Production History | Settings | Back | Logout — giống 25T01) ===== */
+  .subnav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:14px;padding:12px 18px 0}
+  .snav{background:#fff;border:1px solid #bdbdbd;border-radius:3px;padding:11px 23px;font-size:14px;font-weight:700;color:#222;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .snav:hover{background:#f2f2f2}
+  .snav.active{background:#D9D9D9;color:#888;cursor:default;box-shadow:none;pointer-events:none}
+  .snav.phase2{color:#888}
+  .snav .badge{background:#8C8C8C;color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;font-weight:700}
+  .snav.danger{background:#C8606A;color:#fff;border:2px solid #fff;padding:10px 22px}
+  .snav.danger:hover{background:#b8545e}
+
+  /* ===== SETTINGS PAGE (Shift schedule + CSV dir — giống 25T01 tab Settings) ===== */
+  .settings-card{background:#fff;border:1px solid #111;padding:0;margin-bottom:14px}
+  .settings-card h3{margin:0;background:#1F1F1F;color:#fff;padding:9px 14px;font-size:13px;letter-spacing:.5px}
+  .settings-card .bd{padding:16px}
+  .shift-row{display:grid;grid-template-columns:90px 1fr 1fr 90px;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid #eee}
+  .shift-row .sname{font-weight:700}
+  .shift-row label{font-size:12px;color:#555;display:flex;flex-direction:column;gap:3px}
+  .shift-row input[type=text]{padding:6px 8px;border:1px solid #999;border-radius:4px;font-family:Consolas,monospace}
+  .csv-row{display:flex;gap:10px;align-items:end;margin-top:14px}
+  .csv-row label{flex:1;font-size:12px;color:#555;display:flex;flex-direction:column;gap:3px}
+  .csv-row input{padding:7px 9px;border:1px solid #999;border-radius:4px;font-family:Consolas,monospace}
+  .settings-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:6px}
+
+  /* ===== TRACE TIMELINE ===== */
+  .trace-bar{background:#fff;border:1px solid #111;padding:14px;margin-bottom:14px}
+  .trace-bar .row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+  .trace-bar label{display:flex;flex-direction:column;font-size:12px;gap:3px}
+  .trace-bar input{padding:8px;border:1px solid #111;font-size:14px;font-family:Consolas,monospace;min-width:240px;border-radius:14px}
+  .trace-summary{background:#fff;border:1px solid #111;padding:10px;margin-bottom:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .trace-summary div .lbl{font-size:11px;color:#666;text-transform:uppercase}
+  .trace-summary div .val{font-size:14px;font-weight:700;font-family:Consolas,monospace}
+  .timeline{position:relative;padding:20px 8px 8px;background:#fff;border:1px solid #111;overflow-x:auto}
+  .timeline .track{position:relative;display:flex;gap:6px;min-width:1500px}
+  .timeline .step{flex:1;min-width:100px;border:1px solid #111;background:#fafafa;padding:8px;font-size:11px;position:relative}
+  .timeline .step.ok{background:#D6F0D8;border-color:#1E8A2E}
+  .timeline .step.ng{background:#F8CDD0;border-color:#C9272F}
+  .timeline .step.adj{background:#FFE7A8;border-color:#B8860B}
+  .timeline .step .no{font-weight:800;font-size:13px}
+  .timeline .step .nm{font-size:10px;color:#444;min-height:22px;line-height:1.15}
+  .timeline .step .res{margin-top:4px;font-weight:700;font-size:11px;display:flex;justify-content:space-between;align-items:center}
+  .timeline .step .res .tag{padding:1px 5px;color:#fff;font-size:10px;border-radius:2px}
+  .timeline .step .res .tag.ok{background:#1E8A2E}
+  .timeline .step .res .tag.ng{background:#C9272F}
+  .timeline .step .res .tag.adj{background:#B8860B}
+  .timeline .step .thumb{margin-top:4px;height:42px;background:linear-gradient(45deg,#888 25%,#aaa 25% 50%,#888 50% 75%,#aaa 75%);background-size:8px 8px;border:1px solid #555;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;cursor:pointer}
+  .timeline .step .data{margin-top:4px;font-size:10px;color:#333;border-top:1px dashed #888;padding-top:3px;line-height:1.3}
+  .timeline .step .data b{color:#111}
+
+  /* ===== NG GALLERY ===== */
+  .gallery-filters{background:#fff;border:1px solid #111;padding:12px;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+  .gallery-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .ng-card{background:#fff;border:1px solid #111;cursor:pointer;overflow:hidden;transition:transform .12s}
+  .ng-card:hover{transform:translateY(-2px);box-shadow:2px 2px 0 #111}
+  .ng-card .img{height:130px;background-color:#bbb;background-image:linear-gradient(135deg,#888 25%,#bbb 25% 50%,#888 50% 75%,#bbb 75%);background-size:14px 14px;position:relative;display:flex;align-items:center;justify-content:center}
+  .ng-card .img .defect{position:absolute;width:30%;height:30%;border:3px dashed #FFD93D;border-radius:50%;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.1);opacity:.6}}
+  .ng-card .info{padding:8px 10px;font-size:11px}
+  .ng-card .info .case{font-family:Consolas,monospace;font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ng-card .info .meta{color:#666;margin-top:2px;font-size:10px}
+  .ng-card .info .badge{display:inline-block;background:#1F1F1F;color:#fff;padding:1px 5px;font-size:10px;margin-top:4px}
+
+  /* Storage stats banner */
+  .storage-banner{background:#fff;border:1px solid #111;padding:10px 14px;margin-bottom:10px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:12px}
+  .storage-banner b{font-weight:800;color:#111}
+  .storage-banner .total{font-weight:800;font-size:13px;color:#111;margin-right:6px}
+
+  /* Pagination footer */
+  .pag-bar{display:flex;justify-content:space-between;align-items:center;margin-top:12px;background:#fff;border:1px solid #111;padding:10px 14px;font-size:12px}
+  .pag-bar .count{color:#333}
+  .pag-bar .count b{color:#111}
+  .pag-bar .ctrls{display:flex;gap:6px;align-items:center}
+  .pag-bar .ctrls button{background:#1F1F1F;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-weight:600;font-size:12px}
+  .pag-bar .ctrls button:disabled{background:#bbb;cursor:not-allowed}
+  .pag-bar .ctrls .pageinfo{padding:0 8px;font-weight:700}
+
+  /* Disabled Search */
+  .btn:disabled{background:#bbb !important;cursor:not-allowed;opacity:.7}
+
+  /* Skeleton shimmer */
+  .ng-skel{background:#fff;border:1px solid #ddd;overflow:hidden}
+  .ng-skel .img,.ng-skel .info-bar{background:linear-gradient(90deg,#eee 25%,#f6f6f6 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+  .ng-skel .img{height:130px}
+  .ng-skel .info-bar{height:14px;margin:8px 10px;border-radius:2px}
+  .ng-skel .info-bar.small{width:60%;height:10px;margin-top:6px}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  /* ===== POPUP ===== */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal-backdrop.show{display:flex}
+  .modal{background:#fff;border:2px solid #111;min-width:380px;max-width:90vw;max-height:90vh;overflow:auto}
+  .modal .hd{display:flex;justify-content:space-between;align-items:center;background:#1F1F1F;color:#fff;padding:8px 12px;font-weight:700}
+  .modal .hd .x{cursor:pointer;color:#fff;font-size:18px}
+  .modal .bd{padding:14px}
+  /* ===== LOGIN ===== */
+  .login-card{background:#fff;width:300px;border-radius:0;border:none;padding:28px 28px 52px;box-shadow:0 4px 24px rgba(0,0,0,.15);position:relative}
+  .login-card .lc-close{position:absolute;top:14px;right:16px;cursor:pointer;color:#E63946;font-size:22px;font-weight:900;line-height:1;background:none;border:none;padding:0}
+  .login-card .lc-close:hover{opacity:.7}
+  .login-card .lc-logo{text-align:center;margin-top:24px;margin-bottom:14px}
+  .login-card .lc-logo img{height:30px;width:auto}
+  .login-card .lc-title{text-align:center;font-size:18px;font-weight:700;color:#333;margin:0 0 28px}
+  .login-card .lc-field{display:flex;align-items:center;gap:12px;border-bottom:1.5px solid #ccc;padding:10px 0;margin-bottom:22px}
+  .login-card .lc-field svg{flex-shrink:0;color:#333}
+  .login-card .lc-field input{flex:1;border:none;outline:none;font-size:14px;color:#333;background:transparent}
+  .login-card .lc-field input::placeholder{color:#aaa}
+  .login-card .lc-btn{width:100%;padding:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;font-size:15px;font-weight:700;color:#222;cursor:pointer;margin-top:10px;transition:background .15s}
+  .login-card .lc-btn:hover{background:#f0f0f0}
+  .login-card .lc-error{display:none;color:#C9272F;font-size:12px;text-align:center;margin:-10px 0 14px;font-weight:600}
+  .login-card .lc-error.show{display:block}
+  .login-card .lc-hint{text-align:center;font-size:11px;color:#999;margin-top:14px}
+  .login-card .lc-hint b{color:#666}
+
+  /* ===== AUTH (login gate) ===== */
+  /* Dashboard (Overview) mở tự do; các tab nâng cao chỉ hiện sau khi đăng nhập (giống 25T01) */
+  body:not(.authed) .tab[data-tab="history"],
+  body:not(.authed) .tab[data-tab="trace"],
+  body:not(.authed) .tab[data-tab="gallery"]{display:none !important}
+
+  /* ===== UTIL ===== */
+  /* ===== SYS TAGS (PLC / CAM / DB / NAS) ===== */
+  .sys-tags{display:flex;align-items:center;gap:14px;margin:0 10px}
+  .sys-tag{font-size:16px;font-weight:900;letter-spacing:.5px;line-height:1;cursor:pointer;user-select:none;transition:opacity .15s}
+  .sys-tag:hover{opacity:.7}
+  .sys-tag.opc{color:#2ECC40}
+  .sys-tag.db {color:#2ECC40}
+  .sys-tag.nas{color:#2ECC40}
+  .sys-tag.mac{color:#2ECC40}
+  .sys-tag.offline{color:#9aa0a6 !important}
+
+  .grow{flex:1}
+  .center{text-align:center}
+  .small{font-size:11px;color:#666}
+  .pill{display:inline-block;padding:2px 8px;font-size:11px;font-weight:700;border-radius:10px;color:#fff}
+  .pill.ok{background:#1E8A2E}
+  .pill.ng{background:#C9272F}
+  .pill.adj{background:#B8860B}
+  .pill.stop{background:#888}
+
+  /* ===== FAB ĐỀ XUẤT + panel ===== */
+  .fab{position:fixed;right:24px;bottom:42px;z-index:40;display:inline-flex;align-items:center;gap:8px;background:#B8860B;color:#fff;border:none;border-radius:24px;padding:12px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.28)}
+  .fab:hover{background:#a4780a}
+  .sg-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+  .sg-table th{background:#1F1F1F;color:#fff;text-align:left;padding:6px 8px;font-size:12px}
+  .sg-table td{border:1px solid #ddd;padding:6px 8px;vertical-align:top}
+  .sg-table code{background:#F0F0F0;border:1px solid #ccc;border-radius:3px;padding:1px 5px;font-family:Consolas,monospace;font-size:11px;color:#1b1b1b}
+  .sg-have{font-size:12px;color:#1E8A2E;background:#EAFBEA;border:1px solid #A7E6A2;padding:6px 9px;margin-bottom:10px}
+  .sg-pending{font-size:12px;color:#7a5800;background:#FFF8E1;border:1px solid #B8860B;padding:6px 9px;margin-top:12px}
+  .sg-nodep{font-size:12px;color:#10406e;background:#E8EEF6;border:1px solid #9bb6d6;padding:6px 9px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ HEADER (giữ nguyên file gốc) ============ -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-nittoku-box">
+        <img class="brand-nittoku" src="NTK-logo.png" alt="NITTOKU">
+      </span>
+      <span class="sysname">Traceability System</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="sys-tags">
+      <span class="sys-tag db"  id="tag-db"  title="SQL Server Connection" onclick="toggleTag(this)">SQL</span>
+      <span class="sys-tag opc" id="tag-opc" title="OPC Server Connection" onclick="toggleTag(this)">OPC</span>
+      <span class="sys-tag nas" id="tag-nas" title="NAS Server Connection" onclick="toggleTag(this)">NAS</span>
+    </div>
+    <div class="hdr-actions">
+      <button id="gear-btn" class="hdr-ic" title="Settings" onclick="settingsBtn()"><img src="assets/setting.png" width="24" height="24"></button>
+      <button class="hdr-ic" title="Language" onclick="toggleLang()"><img id="lang-btn" src="assets/world.png" width="24" height="24"></button>
+      <button class="hdr-ic" title="Minimize"><img src="assets/minimize-sign.png" width="24" height="24"></button>
+      <button class="hdr-ic" title="Exit"><img src="assets/close.png" width="24" height="24"></button>
+    </div>
+  </div>
+
+  <!-- ============ MENU (subnav dùng chung — chỉ hiện ở khu vực đã login) ============ -->
+  <div class="subnav" id="subnav" style="display:none">
+    <button class="snav" data-go="history" onclick="goTab('history')"><span data-i18n="btn.prodhist">Lịch sử sản xuất</span></button>
+    <button class="snav" data-go="alarms" onclick="goTab('alarms')"><span data-i18n="btn.alarms">Lịch sử lỗi</span></button>
+    <button class="snav phase2" data-go="trace" onclick="goTab('trace')"><span data-i18n="nav.trace">Truy xuất Serial</span> <span class="badge">Phase 2</span></button>
+    <button class="snav phase2" data-go="gallery" onclick="goTab('gallery')"><span data-i18n="nav.gallery">Ảnh NG</span> <span class="badge">Phase 2</span></button>
+    <button class="snav" data-go="settings" onclick="goTab('settings')"><span data-i18n="btn.settings">Cấu hình</span></button>
+    <button class="snav" data-go="overview" onclick="goTab('overview')" data-i18n="btn.back">Quay lại</button>
+    <button class="snav danger" onclick="doLogout()" data-i18n="btn.logout">Đăng xuất</button>
+  </div>
+
+  <!-- ============ PAGE 1: OVERVIEW ============ -->
+  <div class="page active" id="page-overview">
+    <div class="title-row">
+      <h2 class="page-title" data-i18n="overview.title">Tổng quan dây chuyền — 14 PLC / 19 Camera</h2>
+    </div>
+
+    <div class="kpi-bar">
+      <div class="kpi"><div class="lbl">Total today</div><div class="val">3,360</div></div>
+      <div class="kpi ok"><div class="lbl">OK</div><div class="val" id="kpi-ok">3,287</div></div>
+      <div class="kpi ng"><div class="lbl">NG</div><div class="val" id="kpi-ng">29</div></div>
+      <div class="kpi adj"><div class="lbl">Need adjust</div><div class="val">44</div></div>
+      <div class="kpi"><div class="lbl">Active alarms</div><div class="val" style="color:#C9272F">3</div></div>
+    </div>
+
+    <div class="plc-grid" id="plc-grid"></div>
+  </div>
+
+  <!-- ============ PAGE 2: PLC DETAIL ============ -->
+  <div class="page" id="page-detail">
+    <div class="title-row">
+      <button class="back-btn" onclick="goTab('overview')">‹</button>
+      <h2 class="page-title" id="detail-title">PLC04 — Resistance welding</h2>
+    </div>
+
+    <div id="detail-body"></div>
+
+  </div>
+
+  <!-- ============ PAGE 3: HISTORY ============ -->
+  <div class="page" id="page-history">
+    <div class="filter-row">
+      <label>Time start:<input type="text" value="16/05/2026 06:00"></label>
+      <label>Time stop:<input type="text" value="16/05/2026 18:00"></label>
+      <label>PLC:<select id="hist-plc">
+        <option value="All">All (14 PLC)</option>
+        <option value="PLC01">PLC01 — BASE feeding</option>
+        <option value="PLC02">PLC02 — Winding</option>
+        <option value="PLC03">PLC03 — Wire position check</option>
+        <option value="PLC04">PLC04 — Resistance welding</option>
+        <option value="PLC05">PLC05 — Core assy / Electric insp.</option>
+        <option value="PLC06">PLC06 — CASE 2D / BUSH assy</option>
+        <option value="PLC07">PLC07 — Resin potting</option>
+        <option value="PLC08">PLC08 — Coil-CASE assy</option>
+        <option value="PLC09">PLC09 — Hoop-C assy</option>
+        <option value="PLC10">PLC10 — Soldering</option>
+        <option value="PLC11">PLC11 — Solder inspection</option>
+        <option value="PLC12">PLC12 — COVER assy / Inversion</option>
+        <option value="PLC13">PLC13 — Drying</option>
+        <option value="PLC14">PLC14 — Final inspection</option>
+      </select></label>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="searchHistory()">Search</button>
+        <button class="btn" style="background:#7a7a7a" onclick="resetHistory()">Reset</button>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Time start</th><th>Time stop</th><th>PLC</th><th>Stage</th><th>OK</th><th>NG</th><th>Need adjust</th><th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="history-body"></tbody>
+      </table>
+    </div>
+
+    <div class="history-foot">
+      <div class="legend">
+        <span><span class="sw ok"></span>OK</span>
+        <span><span class="sw ng"></span>NG</span>
+        <span><span class="sw adj"></span>Need adjust</span>
+      </div>
+      <button class="btn" onclick="exportHistoryCSV()">Export CSV</button>
+    </div>
+  </div>
+
+  <!-- ============ PAGE 3b: SETTINGS ============ -->
+  <div class="page" id="page-settings">
+    <div class="settings-card">
+      <h3>SHIFT SCHEDULE — Lịch ca làm việc (tự động xuất báo cáo CSV cuối ca)</h3>
+      <div class="bd">
+        <div class="shift-row">
+          <span class="sname">Shift 1</span>
+          <label>Begin<input type="text" value="06:00"></label>
+          <label>End<input type="text" value="14:00"></label>
+          <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" checked> Used</label>
+        </div>
+        <div class="shift-row">
+          <span class="sname">Shift 2</span>
+          <label>Begin<input type="text" value="14:00"></label>
+          <label>End<input type="text" value="22:00"></label>
+          <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" checked> Used</label>
+        </div>
+        <div class="shift-row" style="border-bottom:none">
+          <span class="sname">Shift 3</span>
+          <label>Begin<input type="text" value="22:00"></label>
+          <label>End<input type="text" value="06:00"></label>
+          <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox"> Used</label>
+        </div>
+        <div class="csv-row">
+          <label>Thư mục xuất CSV<input type="text" value="D:\Sumida\Reports\CSV"></label>
+          <button class="btn" style="background:#7a7a7a">Chọn thư mục…</button>
+        </div>
+        <div class="settings-foot">
+          <button class="btn">Save</button>
+          <button class="btn" style="background:#7a7a7a">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PAGE 3c: ALARM HISTORY (Lịch sử lỗi tổng) ============ -->
+  <div class="page" id="page-alarms">
+    <div class="filter-row">
+      <label>Time start:<input type="text" value="16/05/2026 06:00"></label>
+      <label>Time stop:<input type="text" value="16/05/2026 18:00"></label>
+      <label>PLC:<select id="alarms-plc">
+        <option value="All">All (14 PLC)</option>
+        <option value="PLC01">PLC01 — BASE feeding</option>
+        <option value="PLC02">PLC02 — Winding</option>
+        <option value="PLC03">PLC03 — Wire position check</option>
+        <option value="PLC04">PLC04 — Resistance welding</option>
+        <option value="PLC05">PLC05 — Core assy / Electric insp.</option>
+        <option value="PLC06">PLC06 — CASE 2D / BUSH assy</option>
+        <option value="PLC07">PLC07 — Resin potting</option>
+        <option value="PLC08">PLC08 — Coil-CASE assy</option>
+        <option value="PLC09">PLC09 — Hoop-C assy</option>
+        <option value="PLC10">PLC10 — Soldering</option>
+        <option value="PLC11">PLC11 — Solder inspection</option>
+        <option value="PLC12">PLC12 — COVER assy / Inversion</option>
+        <option value="PLC13">PLC13 — Drying</option>
+        <option value="PLC14">PLC14 — Final inspection</option>
+      </select></label>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="searchAlarms()">Search</button>
+        <button class="btn" style="background:#7a7a7a" onclick="resetAlarms()">Reset</button>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table class="history-table">
+        <thead>
+          <tr><th>No</th><th>PLC</th><th>Ngày phát sinh</th><th>Nội dung lỗi</th><th>Ngày giải quyết</th><th>Thời lượng</th><th>Mã 2D SP lúc lỗi</th></tr>
+        </thead>
+        <tbody id="alarms-body"></tbody>
+      </table>
+    </div>
+
+    <div class="history-foot">
+      <div class="legend"><span><span class="sw ng"></span>Đang lỗi (chưa giải quyết)</span></div>
+      <button class="btn" onclick="exportAlarmsCSV()">Export CSV</button>
+    </div>
+  </div>
+
+  <!-- ============ PAGE 4: TRACE ============ -->
+  <div class="page" id="page-trace">
+    <div class="phase2-banner">
+      <span class="pill2">PHASE 2</span>
+      <span>Bản <b>xem trước</b> — truy xuất hành trình theo serial (BASE / CASE 2D), chưa thuộc scope demo Core.</span>
+    </div>
+
+    <div class="trace-bar">
+      <div class="row">
+        <label>Serial code:<input type="text" id="serial-input" value="A0SEV-260516-0001423"></label>
+        <label>Loại:<select><option>CASE 2D code</option><option>BASE 2D code</option></select></label>
+        <button class="btn" onclick="loadTrace()">Tra cứu</button>
+        <div class="grow"></div>
+        <button class="btn danger">Export PDF report</button>
+      </div>
+    </div>
+
+    <div class="trace-summary">
+      <div><div class="lbl">CASE 2D</div><div class="val">A0SEV-260516-0001423</div></div>
+      <div><div class="lbl">BASE 2D</div><div class="val">B0SEV-260516-0001423</div></div>
+      <div><div class="lbl">Lot / Job card</div><div class="val">3217599</div></div>
+      <div><div class="lbl">Started</div><div class="val">16/05/2026 14:12:08</div></div>
+      <div><div class="lbl">Final status</div><div class="val"><span class="pill ng">NG @ PLC11</span></div></div>
+    </div>
+
+    <div class="timeline">
+      <div class="track" id="trace-track"></div>
+    </div>
+  </div>
+
+  <!-- ============ PAGE 5: NG GALLERY ============ -->
+  <div class="page" id="page-gallery">
+    <div class="phase2-banner">
+      <span class="pill2">PHASE 2</span>
+      <span>Bản <b>xem trước</b> — thư viện ảnh NG (lọc theo PLC + ngày), chưa thuộc scope demo Core.</span>
+    </div>
+
+    <div class="gallery-filters">
+      <label>Time start:<input type="text" value="16/05/2026 06:00"></label>
+      <label>Time stop:<input type="text" value="16/05/2026 18:00"></label>
+      <label>Camera:<select>
+        <option>All cameras (19)</option>
+        <option>CAM01 — PLC01 BASE 2D</option>
+        <option>CAM03 — PLC03 Wire position</option>
+        <option>CAM06 — PLC06 CASE 2D</option>
+        <option selected>CAM11A — PLC11 Solder 3D</option>
+        <option>CAM14 — PLC14 Pin position</option>
+      </select></label>
+      <label>Defect type:<select><option>All</option><option>Insertion</option><option>Solder height</option><option>2D code match</option><option>Pin position</option></select></label>
+      <button class="btn">Search</button>
+    </div>
+
+    <div class="storage-banner" id="storage-banner">
+      <span class="total">📦 5,234 NG ảnh tháng này</span>
+      <div class="grow"></div>
+      <span style="color:#666">NAS: <b>20.4 GB / 20 TB</b> (0.1%)</span>
+    </div>
+
+    <div class="gallery-grid" id="gallery-grid"></div>
+
+    <div class="pag-bar">
+      <span class="count">Hiển thị <b id="pag-from">1</b>–<b id="pag-to">24</b> của <b id="pag-total">60</b> ảnh NG</span>
+      <div class="ctrls">
+        <button id="pag-prev" onclick="changePage(-1)">‹ Prev</button>
+        <span class="pageinfo" id="pag-info">Trang 1 / 3</span>
+        <button id="pag-next" onclick="changePage(1)">Next ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOOTER (clock — giống FormMain WinForms) ============ -->
+  <div class="statusbar">
+    <span class="sb-left">Sumida Traceability System · NTKE26T01 · Cowatech</span>
+    <span class="spacer"></span>
+    <span class="sb-clock" id="sb-clock">—</span>
+    <svg class="sb-clock-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M12 7v5l3 2"></path>
+    </svg>
+  </div>
+
+</div>
+
+<!-- ============ FAB: ĐỀ XUẤT DỮ LIỆU ============ -->
+<button class="fab" onclick="openSuggest()" title="Dữ liệu đề xuất bổ sung từ Nittoku">💡 Đề xuất</button>
+<div class="modal-backdrop" id="suggest-bd" onclick="closeSuggest()">
+  <div class="modal" style="width:640px" onclick="event.stopPropagation()">
+    <div class="hd"><span>💡 Cowatech đề xuất — Dữ liệu cần bổ sung</span><span class="x" onclick="closeSuggest()">✕</span></div>
+    <div class="bd" id="suggest-body"></div>
+  </div>
+</div>
+
+<!-- ============ LOGIN POPUP ============ -->
+<div class="modal-backdrop" id="login-bd">
+  <div class="login-card">
+    <button class="lc-close" onclick="closeLogin()" title="Close">✕</button>
+    <div class="lc-logo">
+      <img src="NTK-logo.png" alt="NITTOKU" style="mix-blend-mode:multiply">
+    </div>
+    <p class="lc-title">Đăng nhập</p>
+    <div class="lc-field">
+      <img src="assets/profile-user.png" width="22" height="22" style="display:block;flex-shrink:0">
+      <input type="text" id="login-user" placeholder="Tài khoản" value="Admin" readonly tabindex="-1" style="color:#888;cursor:default">
+    </div>
+    <div class="lc-field">
+      <img src="assets/lock.png" width="22" height="22" style="display:block;flex-shrink:0">
+      <input type="password" id="login-pass" placeholder="Mật khẩu" value="1" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="lc-error" id="login-error">Sai tài khoản hoặc mật khẩu.</div>
+    <button class="lc-btn" onclick="doLogin()">Đăng nhập</button>
+    <div class="lc-hint">Demo: <b>Admin</b> / <b>1</b></div>
+  </div>
+</div>
+
+<!-- ============ NG IMAGE LIGHTBOX ============ -->
+<div class="modal-backdrop" id="img-bd" onclick="closeImg()">
+  <div class="modal" style="width:680px" onclick="event.stopPropagation()">
+    <div class="hd"><span id="img-title">NG image detail</span><span class="x" onclick="closeImg()">✕</span></div>
+    <div class="bd">
+      <div style="height:320px;background-color:#666;background-image:linear-gradient(45deg,#555 25%,#888 25% 50%,#555 50% 75%,#888 75%);background-size:20px 20px;display:flex;align-items:center;justify-content:center;color:#fff;position:relative">
+        <div style="position:absolute;top:30%;left:38%;width:80px;height:80px;border:3px dashed #FFD93D;border-radius:50%"></div>
+        <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);color:#fff;padding:4px 8px;font-family:monospace;font-size:12px">A0SEV-260516-0001423.jpg</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;margin-top:10px">
+        <tr><td style="padding:6px;border-bottom:1px solid #ddd;color:#666;width:35%">CASE 2D code</td><td style="padding:6px;border-bottom:1px solid #ddd;font-family:monospace">A0SEV-260516-0001423</td></tr>
+        <tr><td style="padding:6px;border-bottom:1px solid #ddd;color:#666">Camera / PLC</td><td style="padding:6px;border-bottom:1px solid #ddd">CAM11A — PLC11 Solder inspection</td></tr>
+        <tr><td style="padding:6px;border-bottom:1px solid #ddd;color:#666">Defect type</td><td style="padding:6px;border-bottom:1px solid #ddd"><span class="pill ng">Solder height &lt; 0.18mm</span></td></tr>
+        <tr><td style="padding:6px;border-bottom:1px solid #ddd;color:#666">Captured at</td><td style="padding:6px;border-bottom:1px solid #ddd">16/05/2026 15:38:02</td></tr>
+        <tr><td style="padding:6px;border-bottom:1px solid #ddd;color:#666">Inspection data</td><td style="padding:6px;border-bottom:1px solid #ddd">Solder height: <b>0.14 mm</b> · Volume: <b>0.42 mm³</b></td></tr>
+        <tr><td style="padding:6px;color:#666">NAS path</td><td style="padding:6px;font-family:monospace;font-size:11px">\\NAS-SUMIDA\NG\PLC11\2026-05-16\A0SEV-260516-0001423.jpg</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="assets/chart.umd.min.js"></script>
+<script>
+/* ===== SYS TAG TOGGLE ===== */
+const TAG_LABELS = {
+  'tag-opc': {on:'OPC Server Connection', off:'OPC Server Connection — Disconnected'},
+  'tag-db':  {on:'SQL Server Connection', off:'SQL Server Connection — Disconnected'},
+  'tag-nas': {on:'NAS Server Connection', off:'NAS Server Connection — Disconnected'},
+};
+function toggleTag(el){
+  const isOff = el.classList.toggle('offline');
+  const cfg = TAG_LABELS[el.id];
+  if(cfg) el.title = isOff ? cfg.off : cfg.on;
+}
+
+/* ============ DỮ LIỆU GIẢ — 14 PLC theo IO MAP ============ */
+const PLC_LIST = [
+  {no:1, code:"PLC01", stage:"BASE feeding / BASE 2D code", status:"alarm", ok:243, ng:1, adj:2, case2d:"A0SEV-260516-0001456"},
+  {no:2, code:"PLC02", stage:"Winding", status:"run", ok:239, ng:0, adj:5, case2d:"A0SEV-260516-0001451"},
+  {no:3, code:"PLC03", stage:"Wire position check", status:"run", ok:240, ng:2, adj:0, case2d:"A0SEV-260516-0001448"},
+  {no:4, code:"PLC04", stage:"Resistance welding", status:"alarm", ok:230, ng:2, adj:8, case2d:"A0SEV-260516-0001443"},
+  {no:5, code:"PLC05", stage:"Core assy / Electric insp.", status:"run", ok:237, ng:1, adj:3, case2d:"A0SEV-260516-0001440"},
+  {no:6, code:"PLC06", stage:"CASE 2D code / BUSH assy", status:"run", ok:241, ng:0, adj:4, case2d:"A0SEV-260516-0001437"},
+  {no:7, code:"PLC07", stage:"Resin potting", status:"run", ok:235, ng:1, adj:6, case2d:"A0SEV-260516-0001433"},
+  {no:8, code:"PLC08", stage:"Coil-CASE assy", status:"run", ok:238, ng:0, adj:2, case2d:"A0SEV-260516-0001429"},
+  {no:9, code:"PLC09", stage:"Hoop-C assy", status:"run", ok:240, ng:0, adj:0, case2d:"A0SEV-260516-0001425"},
+  {no:10, code:"PLC10", stage:"Soldering", status:"run", ok:236, ng:2, adj:3, case2d:"A0SEV-260516-0001421"},
+  {no:11, code:"PLC11", stage:"Solder inspection", status:"alarm", ok:227, ng:7, adj:5, case2d:"A0SEV-260516-0001418"},
+  {no:12, code:"PLC12", stage:"COVER assy / Inversion", status:"run", ok:243, ng:0, adj:1, case2d:"A0SEV-260516-0001415"},
+  {no:13, code:"PLC13", stage:"Drying", status:"run", ok:248, ng:0, adj:0, case2d:"(oven)"},
+  {no:14, code:"PLC14", stage:"Final inspection (Weight/Elec/Pin/Date)", status:"run", ok:240, ng:3, adj:5, case2d:"A0SEV-260516-0001405"}
+];
+
+function renderPLCs(){
+  const g = document.getElementById('plc-grid');
+  g.innerHTML = PLC_LIST.map(p=>`
+    <div class="plc-card ${p.status==='alarm'?'alarm':''} ${p.status==='stop'?'stopped':''}" onclick="openDetail('${p.code}','${p.stage.replace(/'/g,"&apos;")}')">
+      <div class="hd">
+        <div>
+          <div class="pno">${p.code}</div>
+          <div class="stage">${p.stage}</div>
+        </div>
+        <div class="led"></div>
+      </div>
+      <div class="nums">
+        <div title="OK"><span class="v-ok">${p.ok}</span><span class="small">OK</span></div>
+        <div title="NG"><span class="v-ng">${p.ng}</span><span class="small">NG</span></div>
+        <div title="Need adjust"><span class="v-adj">${p.adj}</span><span class="small">ADJ</span></div>
+      </div>
+      <div class="case2d" title="${p.case2d}">⌬ ${p.case2d}</div>
+    </div>
+  `).join('');
+}
+
+/* ============ AUTH / LOGIN (giống NTKE25T01) ============ */
+// Dashboard (Overview) mở tự do; History/Trace/Gallery chỉ hiện sau khi đăng nhập.
+let authed = false;
+let lastAdvPage = 'history';   // nhớ tab nâng cao cuối cùng để quay lại đúng chỗ
+let activePLC = null;          // PLC đang xem ở detail (cho FAB đề xuất theo ngữ cảnh)
+
+function showLogin(){
+  document.getElementById('login-error').classList.remove('show');
+  document.getElementById('login-bd').classList.add('show');
+  const p = document.getElementById('login-pass'); if(p) setTimeout(()=>p.focus(),50);
+}
+// Nút bánh răng: chưa login → hiện form; đã login (đang ở Dashboard) → vào lại khu vực nâng cao, không cần login lại
+function settingsBtn(){ if(authed) goTab(lastAdvPage); else showLogin(); }
+function closeLogin(){
+  document.getElementById('login-bd').classList.remove('show');
+}
+function doLogin(){
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if(u === 'Admin' && p === '1'){                   // demo credential (giống 25T01)
+    authed = true;
+    document.body.classList.add('authed');
+    document.getElementById('login-bd').classList.remove('show');
+    document.getElementById('login-pass').value = '1';
+    document.getElementById('login-error').classList.remove('show');
+    goTab('history');   // sau khi đăng nhập → vào thông tin nâng cao
+  } else {
+    document.getElementById('login-error').classList.add('show');
+  }
+}
+function doLogout(){
+  authed = false;
+  document.body.classList.remove('authed');
+  document.getElementById('login-pass').value = '1';
+  goTab('overview');   // quay về Dashboard, ẩn lại các tab nâng cao
+}
+
+/* ============ NAVIGATION ============ */
+const ADV_PAGES = ['history','alarms','settings','trace','gallery'];
+function goTab(t){
+  if(t !== 'overview' && t !== 'detail' && !authed){ showLogin(); return; }   // khu vực nâng cao cần đăng nhập
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+t).classList.add('active');
+  // Menu subnav: hiện ở khu vực đã login (History/Settings/Trace/Gallery), ẩn ở Dashboard/Detail
+  const adv = ADV_PAGES.includes(t);
+  if(adv) lastAdvPage = t;   // ghi nhớ tab nâng cao đang xem
+  const sub = document.getElementById('subnav');
+  sub.style.display = adv ? 'flex' : 'none';
+  sub.querySelectorAll('.snav[data-go]').forEach(b=>b.classList.toggle('active', b.dataset.go===t));
+  // Nút bánh răng chỉ vô hiệu khi đang Ở TRONG khu vực nâng cao; về Dashboard thì bật lại
+  document.getElementById('gear-btn').disabled = adv;
+}
+function openDetail(code,stage){
+  activePLC = code;
+  document.getElementById('detail-title').textContent = `${code} — ${stage}`;
+  renderPLCDetail(code, stage);
+  goTab('detail');
+}
+
+/* ============ PLC DETAIL DATA ============ */
+// Full data for 14 PLC — schema chuẩn theo IO MAP, render bằng template chung
+const PLC_DETAIL = {
+  PLC01: {
+    stage: "BASE feeding / BASE 2D code",
+    machineStatus: {
+      connection: { ok:true,  label:"Online",  sub:"OPC UA · 192.168.10.11" },
+      run:        { ok:true,  label:"Running", sub:"Auto mode" },
+      alarm:      { ok:false, label:"Error",   sub:"Áp suất khí nén thấp (ALM-0002) · xem Lịch sử lỗi bên dưới" }
+    },
+    trace: [
+      { lbl:"Material Lot (BASE)",  value:"LOT-BASE-26W20-0142",   scan:"Scanned 13:45:08" },
+      { lbl:"Carrier 2D",           value:"CAR-001-04287",         scan:"Detected 15:42:24" },
+      { lbl:"Winding Chuck 2D",     value:"CHK-001-00094",         scan:"Detected 15:42:24" },
+      { lbl:"BASE 2D ★ key",        value:"A0SEV-260516-0001456",  scan:"Printed & verified 15:42:25", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:45:08", timeStop:"—",                   ok:243, ng:1, adj:2, total:246 },
+      lastRun: { timeStart:"16/05/2026 11:30:02", timeStop:"16/05/2026 13:42:55", ok:248, ng:0, adj:4, total:252 }
+    },
+    inspection: [
+      { lbl:"BASE 2D Matching", val:"37", unit:"/40", status:"ok", note:"Grade A (ISO 15415)" },
+      { lbl:"CCD Insertion",    val:"OK", unit:"",    status:"ok", note:"Vision: Keyence CV-X350F · CAM01" }
+    ]
+  },
+
+  PLC02: {
+    stage: "Winding",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.12" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot (Dây đồng φ)", value:"LOT-CU-26W20-0086",    scan:"Scanned 14:02:11" },
+      { lbl:"Carrier 2D",                value:"CAR-001-04286",        scan:"Detected 15:42:22" },
+      { lbl:"Winding Chuck 2D",          value:"CHK-001-00093",        scan:"Detected 15:42:22" },
+      { lbl:"BASE 2D ★ key",             value:"A0SEV-260516-0001451", scan:"Read 15:42:23", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:46:12", timeStop:"—",                   ok:239, ng:0, adj:5, total:244 },
+      lastRun: { timeStart:"16/05/2026 11:32:08", timeStop:"16/05/2026 13:44:30", ok:251, ng:0, adj:2, total:253 }
+    },
+    inspection: [
+      { lbl:"Winding Tension", val:"0.42", unit:"cN", status:"ok", note:"Target 0.40 ± 0.05 cN" }
+    ]
+  },
+
+  PLC03: {
+    stage: "Wire position check",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.13" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Carrier 2D",       value:"CAR-001-04285",        scan:"Detected 15:42:20" },
+      { lbl:"Winding Chuck 2D", value:"CHK-001-00092",        scan:"Detected 15:42:20" },
+      { lbl:"BASE 2D ★ key",    value:"A0SEV-260516-0001448", scan:"Read 15:42:21", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:47:30", timeStop:"—",                   ok:240, ng:2, adj:0, total:242 },
+      lastRun: { timeStart:"16/05/2026 11:34:22", timeStop:"16/05/2026 13:45:50", ok:252, ng:1, adj:0, total:253 }
+    },
+    inspection: [
+      { lbl:"WirePos Result", val:"OK",    unit:"",   status:"ok" },
+      { lbl:"Position X",     val:"+0.04", unit:"mm", status:"ok", note:"Tol ± 0.10 mm" },
+      { lbl:"Position Y",     val:"-0.02", unit:"mm", status:"ok", note:"Tol ± 0.10 mm" }
+    ]
+  },
+
+  PLC04: {
+    stage: "Resistance welding",
+    machineStatus: {
+      connection: { ok:true,  label:"Online",      sub:"OPC UA · 192.168.10.14" },
+      run:        { ok:true,  label:"Running",     sub:"Auto mode" },
+      alarm:      { ok:false, label:"Error",  sub:"Dòng hàn vượt UCL (ALM-1023) · xem Lịch sử lỗi bên dưới" }
+    },
+    trace: [
+      { lbl:"Carrier 2D",       value:"CAR-001-04282",        scan:"Detected 15:42:18" },
+      { lbl:"Winding Chuck 2D", value:"CHK-001-00091",        scan:"Detected 15:42:18" },
+      { lbl:"BASE 2D ★ key",    value:"A0SEV-260516-0001443", scan:"Read 15:42:19", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 15:27:26", timeStop:"—",                   ok:230, ng:2, adj:8, total:240 },
+      lastRun: { timeStart:"16/05/2026 13:02:10", timeStop:"16/05/2026 15:18:44", ok:235, ng:0, adj:5, total:240 }
+    },
+    inspection: [
+      { lbl:"Weld Voltage",        val:"3.18",  unit:"V",  status:"ok" },
+      { lbl:"Weld Current",        val:"19.82", unit:"A",  status:"ng", note:"UCL 18.50A" },
+      { lbl:"Bend Pressure F",     val:"12.40", unit:"N",  status:"ok" },
+      { lbl:"Bend Pressure S",     val:"12.62", unit:"N",  status:"ok" },
+      { lbl:"Thickness before",    val:"1.20",  unit:"mm", status:"" },
+      { lbl:"Thickness after",     val:"1.04",  unit:"mm", status:"" },
+      { lbl:"Δ Thickness",         val:"-0.16", unit:"mm", status:"ng", note:"Spec -0.10 ~ +0.05" },
+      { lbl:"Pressure after weld", val:"8.95",  unit:"N",  status:"ok" }
+    ]
+  },
+
+  PLC05: {
+    stage: "Core assy / Electric inspection",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.15" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot (Core)", value:"LOT-CORE-26W19-0234",  scan:"Scanned 12:30:55" },
+      { lbl:"Carrier 2D",          value:"CAR-001-04280",        scan:"Detected 15:42:16" },
+      { lbl:"Winding Chuck 2D",    value:"CHK-001-00090",        scan:"Detected 15:42:16" },
+      { lbl:"BASE 2D ★ key",       value:"A0SEV-260516-0001440", scan:"Read 15:42:17", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:50:18", timeStop:"—",                   ok:237, ng:1, adj:3, total:241 },
+      lastRun: { timeStart:"16/05/2026 11:38:45", timeStop:"16/05/2026 13:48:30", ok:250, ng:0, adj:2, total:252 }
+    },
+    inspection: [
+      { lbl:"Inductance",           val:"12.42", unit:"µH", status:"ok", note:"Spec 12.0 ~ 13.0 µH" },
+      { lbl:"CCD (Core insertion)", val:"OK",    unit:"",   status:"ok", note:"Vision CAM05" }
+    ]
+  },
+
+  PLC06: {
+    stage: "CASE 2D code / BUSH assy",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.16" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot (CASE)", value:"LOT-CASE-26W20-0145", scan:"Scanned 13:15:22" },
+      { lbl:"Material Lot (BUSH)", value:"LOT-BUSH-26W20-0091", scan:"Scanned 13:18:40" },
+      { lbl:"CASE 2D ★ key",       value:"A0SEV-260516-0001437", scan:"Printed & verified 15:42:14", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:52:44", timeStop:"—",                   ok:241, ng:0, adj:4, total:245 },
+      lastRun: { timeStart:"16/05/2026 11:41:20", timeStop:"16/05/2026 13:50:55", ok:251, ng:1, adj:1, total:253 }
+    },
+    inspection: [
+      { lbl:"CASE 2D Matching", val:"38",   unit:"/40", status:"ok", note:"Grade A (ISO 15415)" },
+      { lbl:"BUSH assy Height", val:"4.20", unit:"mm",  status:"ok", note:"Spec 4.15 ~ 4.25 mm" },
+      { lbl:"CCD (BUSH crack)", val:"OK",   unit:"",    status:"ok", note:"Vision CAM06" }
+    ]
+  },
+
+  PLC07: {
+    stage: "Resin potting",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.17" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot A (Keo A)", value:"LOT-RESIN-A-26W20-051", scan:"Scanned 06:30:11 — Tank A" },
+      { lbl:"Material Lot B (Keo B)", value:"LOT-RESIN-B-26W20-051", scan:"Scanned 06:31:24 — Tank B" },
+      { lbl:"Potting Carrier 2D",     value:"POT-002-01254",         scan:"Detected 15:42:12" },
+      { lbl:"CASE 2D ★ key",          value:"A0SEV-260516-0001433",  scan:"Read 15:42:13", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:55:08", timeStop:"—",                   ok:235, ng:1, adj:6, total:242 },
+      lastRun: { timeStart:"16/05/2026 11:44:00", timeStop:"16/05/2026 13:53:20", ok:249, ng:0, adj:3, total:252 }
+    },
+    inspection: [
+      { lbl:"Flow Quantity A", val:"1.42", unit:"ml", status:"ok", note:"Target 1.40 ± 0.05 ml" },
+      { lbl:"Flow Quantity B", val:"1.40", unit:"ml", status:"ok", note:"Target 1.40 ± 0.05 ml" }
+    ]
+  },
+
+  PLC08: {
+    stage: "Coil-CASE assy",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.18" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Potting Carrier 2D", value:"POT-002-01250",        scan:"Detected 15:42:10" },
+      { lbl:"CASE 2D ★ key",      value:"A0SEV-260516-0001429", scan:"Read 15:42:11", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:57:32", timeStop:"—",                   ok:238, ng:0, adj:2, total:240 },
+      lastRun: { timeStart:"16/05/2026 11:46:50", timeStop:"16/05/2026 13:55:42", ok:252, ng:0, adj:1, total:253 }
+    },
+    inspection: [
+      { lbl:"Assy Pressure", val:"8.95", unit:"N",  status:"ok", note:"Spec 8.0 ~ 10.0 N" },
+      { lbl:"Assy Height",   val:"8.20", unit:"mm", status:"ok", note:"Spec 8.15 ~ 8.25 mm" }
+    ]
+  },
+
+  PLC09: {
+    stage: "Hoop-C assy",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.19" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot (Hoop-C reel)", value:"LOT-HOOP-26W20-0312",  scan:"Scanned 10:15:30" },
+      { lbl:"Potting Carrier 2D",         value:"POT-002-01246",        scan:"Detected 15:42:08" },
+      { lbl:"CASE 2D ★ key",              value:"A0SEV-260516-0001425", scan:"Read 15:42:09", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 13:59:48", timeStop:"—",                   ok:240, ng:0, adj:0, total:240 },
+      lastRun: { timeStart:"16/05/2026 11:49:14", timeStop:"16/05/2026 13:58:00", ok:252, ng:0, adj:0, total:252 }
+    },
+    inspection: [
+      { lbl:"CCD Inspection", val:"OK", unit:"", status:"ok", note:"Vision CAM09" }
+    ]
+  },
+
+  PLC10: {
+    stage: "Soldering",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.20" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot (Solder wire bobbin)", value:"LOT-SOLDER-26W19-0078", scan:"Scanned 09:45:12" },
+      { lbl:"Potting Carrier 2D",                value:"POT-002-01242",         scan:"Detected 15:42:06" },
+      { lbl:"CASE 2D ★ key",                     value:"A0SEV-260516-0001421",  scan:"Read 15:42:07", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 14:02:11", timeStop:"—",                   ok:236, ng:2, adj:3, total:241 },
+      lastRun: { timeStart:"16/05/2026 11:51:30", timeStop:"16/05/2026 14:00:22", ok:250, ng:1, adj:2, total:253 }
+    },
+    inspection: [
+      { lbl:"Solder wire supply length", val:"3.42", unit:"mm", status:"ok", note:"Target 3.40 ± 0.10 mm" }
+    ]
+  },
+
+  PLC11: {
+    stage: "Solder inspection",
+    machineStatus: {
+      connection: { ok:true,  label:"Online",     sub:"OPC UA · 192.168.10.21" },
+      run:        { ok:true,  label:"Running",    sub:"Auto mode" },
+      alarm:      { ok:false, label:"Error", sub:"Camera 3D trigger timeout (ALM-2104) · xem Lịch sử lỗi bên dưới" }
+    },
+    trace: [
+      { lbl:"Potting Carrier 2D", value:"POT-002-01238",        scan:"Detected 15:42:04" },
+      { lbl:"CASE 2D ★ key",      value:"A0SEV-260516-0001418", scan:"Read 15:42:05", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 14:04:35", timeStop:"—",                   ok:227, ng:7, adj:5, total:239 },
+      lastRun: { timeStart:"16/05/2026 11:53:48", timeStop:"16/05/2026 14:02:50", ok:248, ng:2, adj:3, total:253 }
+    },
+    inspection: [
+      { lbl:"3D Camera Result", val:"NG",   unit:"",    status:"ng", note:"Vision CAM11A" },
+      { lbl:"Solder Height",    val:"0.14", unit:"mm",  status:"ng", note:"Spec ≥ 0.18 mm" },
+      { lbl:"Solder Volume",    val:"0.42", unit:"mm³", status:"ok" }
+    ]
+  },
+
+  PLC12: {
+    stage: "COVER assy / Inversion",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.22" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"Material Lot (COVER)", value:"LOT-COVER-26W20-0188", scan:"Scanned 11:20:08" },
+      { lbl:"Potting Carrier 2D",   value:"POT-002-01234",        scan:"Detected 15:42:02" },
+      { lbl:"CASE 2D ★ key",        value:"A0SEV-260516-0001415", scan:"Read 15:42:03", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 14:07:00", timeStop:"—",                   ok:243, ng:0, adj:1, total:244 },
+      lastRun: { timeStart:"16/05/2026 11:56:10", timeStop:"16/05/2026 14:05:18", ok:253, ng:0, adj:0, total:253 }
+    },
+    inspection: [
+      { lbl:"COVER assy Height",   val:"12.85", unit:"mm",  status:"ok", note:"Spec 12.80 ~ 12.90 mm" },
+      { lbl:"Potting→Invert Time", val:"1180",  unit:"s",   status:"ok", note:"≈ 19.7 min · Max 1800 s (30 min)" },
+      { lbl:"Timer Judgment",      val:"OK",    unit:"",    status:"ok" }
+    ]
+  },
+
+  PLC13: {
+    stage: "Drying (auto-shelf oven)",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.23" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [],
+    production: {
+      running: { timeStart:"16/05/2026 14:09:20", timeStop:"—",                   ok:248, ng:0, adj:0, total:248 },
+      lastRun: { timeStart:"16/05/2026 11:58:30", timeStop:"16/05/2026 14:07:40", ok:253, ng:0, adj:0, total:253 }
+    },
+    inspection: [],
+    note: "Lò sấy tự động — theo IO MAP chỉ thu Status & Alarm (không có Traceability codes, không có Inspection data)."
+  },
+
+  PLC14: {
+    stage: "Final inspection (Weight / Electric / Pin / Date)",
+    machineStatus: {
+      connection: { ok:true, label:"Online",  sub:"OPC UA · 192.168.10.24" },
+      run:        { ok:true, label:"Running", sub:"Auto mode" },
+      alarm:      { ok:true, label:"Normal",  sub:"Không có alarm" }
+    },
+    trace: [
+      { lbl:"CASE 2D (Input)",        value:"A0SEV-260516-0001405", scan:"Read 15:41:58" },
+      { lbl:"CASE 2D (Output) ★ key", value:"A0SEV-260516-0001405", scan:"Recorded to DB 15:42:01", key:true }
+    ],
+    production: {
+      running: { timeStart:"16/05/2026 14:12:08", timeStop:"—",                   ok:240, ng:3, adj:5, total:248 },
+      lastRun: { timeStart:"16/05/2026 12:00:55", timeStop:"16/05/2026 14:10:25", ok:251, ng:1, adj:1, total:253 }
+    },
+    inspection: [
+      { lbl:"Weight",              val:"4.82",  unit:"g",  status:"ok", note:"Spec 4.75 ~ 4.85 g" },
+      { lbl:"Weight Result",       val:"OK",    unit:"",   status:"ok" },
+      { lbl:"Electric 1 (L)",      val:"12.45", unit:"µH", status:"ok", note:"Spec 12.0 ~ 13.0 µH" },
+      { lbl:"Electric 2 (DCR)",    val:"0.18",  unit:"Ω",  status:"ok", note:"Spec ≤ 0.20 Ω" },
+      { lbl:"Dielectric Strength", val:"500",   unit:"V",  status:"ok" },
+      { lbl:"Pin Position",        val:"OK",    unit:"",   status:"ok", note:"Vision CAM14" },
+      { lbl:"Date Marking",        val:"OK",    unit:"",   status:"ok", note:"Printed & verified" },
+      { lbl:"CASE 2D Output",      val:"OK",    unit:"",   status:"ok", note:"Recorded to DB" }
+    ]
+  }
+};
+
+/* ============ ALARM HISTORY (Lịch sử lỗi) ============ */
+// Mốc thời gian suy từ Machine.Status (3↔1); Nội dung lỗi cần Alarm.Code từ PLC (đề xuất Nittoku).
+const ALARMS = [
+  {plc:"PLC01", code:"ALM-0002", content:"Áp suất khí nén thấp",            raised:"16/05/2026 15:39:50", resolved:null,                 product:"A0SEV-260516-0001456"},
+  {plc:"PLC04", code:"ALM-1023", content:"Dòng hàn vượt UCL",               raised:"16/05/2026 15:27:26", resolved:null,                 product:"A0SEV-260516-0001443"},
+  {plc:"PLC11", code:"ALM-2104", content:"Camera 3D trigger timeout",       raised:"16/05/2026 14:04:35", resolved:null,                 product:"A0SEV-260516-0001418"},
+  {plc:"PLC01", code:"ALM-0135", content:"Lỗi đọc / in mã BASE 2D",         raised:"16/05/2026 13:20:08", resolved:"16/05/2026 13:21:55", product:"A0SEV-260516-0001452"},
+  {plc:"PLC04", code:"ALM-1010", content:"Mòn điện cực hàn",                raised:"16/05/2026 13:02:10", resolved:"16/05/2026 13:14:40", product:"A0SEV-260516-0001401"},
+  {plc:"PLC13", code:"ALM-1305", content:"Nhiệt độ lò sấy bất thường",      raised:"16/05/2026 12:15:00", resolved:"16/05/2026 12:40:33", product:"—"},
+  {plc:"PLC01", code:"ALM-0120", content:"BASE feeder hết phôi",            raised:"16/05/2026 11:05:30", resolved:"16/05/2026 11:08:12", product:"A0SEV-260516-0001440"},
+  {plc:"PLC02", code:"ALM-0210", content:"Đứt dây đồng",                    raised:"16/05/2026 10:22:14", resolved:"16/05/2026 10:31:02", product:"A0SEV-260516-0001388"},
+  {plc:"PLC07", code:"ALM-0705", content:"Quét sai can keo (A/B mismatch)", raised:"16/05/2026 09:48:30", resolved:"16/05/2026 09:52:10", product:"A0SEV-260516-0001355"}
+];
+function parseDT(s){
+  const m = (s||"").match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/); if(!m) return 0;
+  return ((((+m[3])*12 + (+m[2]))*31 + (+m[1]))*24 + (+m[4]))*3600 + (+m[5])*60 + (+m[6]);
+}
+function alarmDuration(raised, resolved){
+  if(!resolved) return "—";
+  let d = parseDT(resolved) - parseDT(raised); if(d<0) d=0;
+  const h=Math.floor(d/3600), mi=Math.floor((d%3600)/60), se=d%60;
+  return (h?h+"h ":"") + (mi||h?mi+"m ":"") + se + "s";
+}
+function alarmHistoryBlock(code){
+  const rows = ALARMS.filter(a=>a.plc===code);
+  const body = rows.length===0
+    ? `<tr><td colspan="5" style="padding:14px;color:#888">Không có lịch sử lỗi.</td></tr>`
+    : rows.map((a,i)=>`
+      <tr class="${a.resolved?'':'row-ng'}">
+        <td>${i+1}</td>
+        <td>${a.raised}</td>
+        <td style="text-align:left">${a.content} <span style="color:#888">(${a.code})</span></td>
+        <td>${a.resolved || '<b>(chưa giải quyết)</b>'}</td>
+        <td>${alarmDuration(a.raised, a.resolved)}</td>
+      </tr>`).join('');
+  return `
+    <div class="insp-section">
+      <h3>LỊCH SỬ LỖI — ${code}</h3>
+      <div class="table-scroll" style="max-height:210px;margin:12px;border:1px solid #111">
+        <table class="history-table">
+          <thead><tr><th>No</th><th>Ngày phát sinh</th><th>Nội dung lỗi</th><th>Ngày giải quyết</th><th>Thời lượng</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+/* ----- Màn Lịch sử lỗi tổng (toàn 14 PLC) ----- */
+function renderAlarmsPage(rows){
+  const data = rows || ALARMS;
+  const body = document.getElementById('alarms-body');
+  if(!body) return;
+  if(data.length===0){ body.innerHTML = `<tr><td colspan="7" style="padding:16px;color:#888">Không có lỗi phù hợp bộ lọc.</td></tr>`; return; }
+  body.innerHTML = data.map((a,i)=>`
+    <tr class="${a.resolved?'':'row-ng'}">
+      <td>${i+1}</td>
+      <td>${a.plc}</td>
+      <td>${a.raised}</td>
+      <td style="text-align:left">${a.content} <span style="color:#888">(${a.code})</span></td>
+      <td>${a.resolved || '<b>(chưa giải quyết)</b>'}</td>
+      <td>${alarmDuration(a.raised, a.resolved)}</td>
+      <td>${a.product || '—'}</td>
+    </tr>`).join('');
+}
+function filteredAlarms(){
+  const sel = document.getElementById('alarms-plc');
+  const code = sel ? sel.value : 'All';
+  return code==='All' ? ALARMS : ALARMS.filter(a=>a.plc===code);
+}
+function searchAlarms(){ renderAlarmsPage(filteredAlarms()); }
+function resetAlarms(){ const s=document.getElementById('alarms-plc'); if(s) s.value='All'; renderAlarmsPage(ALARMS); }
+function exportAlarmsCSV(){
+  const rows = filteredAlarms();
+  const head = ["No","PLC","Ngày phát sinh","Nội dung lỗi","Mã lỗi","Ngày giải quyết","Thời lượng","Mã 2D SP"];
+  const esc = v => `"${String(v).replace(/"/g,'""')}"`;
+  const lines = [head.map(esc).join(",")];
+  rows.forEach((a,i)=>lines.push([i+1,a.plc,a.raised,a.content,a.code,a.resolved||"(chưa giải quyết)",alarmDuration(a.raised,a.resolved),a.product||""].map(esc).join(",")));
+  const blob = new Blob(["﻿"+lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  const x = document.createElement("a"); x.href = URL.createObjectURL(blob); x.download = "alarm_history_export.csv";
+  document.body.appendChild(x); x.click(); x.remove(); URL.revokeObjectURL(x.href);
+}
+
+function renderPLCDetail(code, stage){
+  const root = document.getElementById('detail-body');
+  const data = PLC_DETAIL[code];
+  if(!data){
+    root.innerHTML = '<div style="background:#FFF3CD;border:1px solid #B8860B;color:#7a5800;padding:12px 14px;font-size:13px">Không tìm thấy dữ liệu chi tiết cho '+code+'</div>';
+    return;
+  }
+  const ms = data.machineStatus;
+  const tr = data.trace || [];
+  const pr = data.production;
+  const insp = data.inspection || [];
+  const msClass = (s)=> s.ok ? '' : (s.stopped ? 'stop' : 'bad');
+
+  const noteBanner = data.note ? `
+    <div style="background:#FFF8E1;border:1px solid #B8860B;color:#7a5800;padding:10px 14px;margin-bottom:12px;font-size:12px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:18px;color:#B8860B">ⓘ</span>${data.note}
+    </div>` : '';
+
+  const traceBlock = tr.length === 0 ? '' : `
+    <div class="insp-section">
+      <h3>CURRENT WORKPIECE — TRACEABILITY CODES</h3>
+      <div class="trace-grid" style="grid-template-columns:repeat(${tr.length},1fr)">
+        ${tr.map(t=>`
+          <div class="trace-cell ${t.key?'key':''}">
+            <div class="lbl">${t.lbl}</div>
+            <div class="val">${t.value}</div>
+            <div class="scan">${t.scan||''}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  const inspBlock = insp.length === 0 ? '' : `
+    <div class="insp-section">
+      <h3>INSPECTION DATA — ${data.stage} (${code})</h3>
+      <div class="insp-grid" style="grid-template-columns:repeat(${Math.min(insp.length,4)},1fr)">
+        ${insp.map(i=>`
+          <div class="insp-cell ${i.status||''}">
+            <div class="lbl">${i.lbl}</div>
+            <div class="val">${i.val}<span class="unit">${i.unit||''}</span></div>
+            ${i.note?`<div class="sub" style="font-size:11px;color:#666;margin-top:2px">${i.note}</div>`:''}
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  root.innerHTML = `
+    ${noteBanner}
+    <!-- BLOCK 1: MACHINE STATUS -->
+    <div class="insp-section">
+      <h3>MACHINE STATUS</h3>
+      <div class="insp-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="ms-cell ${msClass(ms.connection)}"><div class="lbl">Connection (PC ↔ PLC)</div><div class="val"><span class="led"></span>${ms.connection.label}</div><div class="sub">${ms.connection.sub}</div></div>
+        <div class="ms-cell ${msClass(ms.run)}"><div class="lbl">Run status</div><div class="val"><span class="led"></span>${ms.run.label}</div><div class="sub">${ms.run.sub}</div></div>
+        <div class="ms-cell ${msClass(ms.alarm)}"><div class="lbl">Alarm</div><div class="val"><span class="led"></span>${ms.alarm.label}</div><div class="sub">${ms.alarm.sub}</div></div>
+      </div>
+    </div>
+
+    <!-- BLOCK 2: CURRENT WORKPIECE - TRACEABILITY (hidden if no trace) -->
+    ${traceBlock}
+
+    <!-- BLOCK 3: PRODUCTION COUNT - Running vs Last Run -->
+    <div class="detail-grid">
+      <div class="detail-col running">
+        <h3>Running</h3>
+        <table>
+          <tr><td>Time start:</td><td>${pr.running.timeStart}</td></tr>
+          <tr><td>Time stop:</td><td>${pr.running.timeStop}</td></tr>
+          <tr><td>OK:</td><td><span class="v-ok-big">${pr.running.ok}</span></td></tr>
+          <tr><td>NG:</td><td><span class="v-ng-big">${pr.running.ng}</span></td></tr>
+          <tr><td>Need adjust:</td><td><span class="v-adj-big">${pr.running.adj}</span></td></tr>
+          <tr><td>Total:</td><td style="font-weight:800;font-size:18px">${pr.running.total}</td></tr>
+        </table>
+      </div>
+      <div class="detail-col lastrun">
+        <h3>Last Run</h3>
+        <table>
+          <tr><td>Time start:</td><td>${pr.lastRun.timeStart}</td></tr>
+          <tr><td>Time stop:</td><td>${pr.lastRun.timeStop}</td></tr>
+          <tr><td>OK:</td><td><span class="v-ok-big">${pr.lastRun.ok}</span></td></tr>
+          <tr><td>NG:</td><td><span class="v-ng-big">${pr.lastRun.ng}</span></td></tr>
+          <tr><td>Need adjust:</td><td><span class="v-adj-big">${pr.lastRun.adj}</span></td></tr>
+          <tr><td>Total:</td><td style="font-weight:800;font-size:18px">${pr.lastRun.total}</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- BLOCK 4: INSPECTION DATA (hidden if no inspection) -->
+    ${inspBlock}
+
+    <!-- BLOCK 5: ALARM HISTORY (Lịch sử lỗi) -->
+    ${alarmHistoryBlock(code)}
+  `;
+}
+
+/* ============ HISTORY ROWS ============ */
+// Thống kê theo PLC + khung giờ (không Job card/PO — theo IO MAP 26T01).
+const HIST = [
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"15:27:26", te:"15:42:30", ok:230, ng:2, adj:8},
+  {code:"PLC11", stage:"Solder inspection",  date:"16/05/2026", ts:"15:20:11", te:"15:38:02", ok:227, ng:7, adj:5},
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"15:12:11", te:"15:27:25", ok:240, ng:0, adj:0},
+  {code:"PLC01", stage:"BASE feeding",       date:"16/05/2026", ts:"15:05:40", te:"15:21:00", ok:243, ng:1, adj:2},
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"14:55:33", te:"15:11:50", ok:235, ng:0, adj:5},
+  {code:"PLC14", stage:"Final inspection",   date:"16/05/2026", ts:"14:50:08", te:"15:09:30", ok:240, ng:3, adj:5},
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"14:40:02", te:"14:55:25", ok:240, ng:0, adj:0},
+  {code:"PLC11", stage:"Solder inspection",  date:"16/05/2026", ts:"14:30:00", te:"14:48:20", ok:248, ng:2, adj:3},
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"14:22:18", te:"14:39:45", ok:237, ng:0, adj:3},
+  {code:"PLC01", stage:"BASE feeding",       date:"16/05/2026", ts:"14:10:30", te:"14:28:55", ok:248, ng:0, adj:4},
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"14:05:50", te:"14:21:33", ok:228, ng:5, adj:7},
+  {code:"PLC14", stage:"Final inspection",   date:"16/05/2026", ts:"13:55:00", te:"14:12:40", ok:251, ng:1, adj:1},
+  {code:"PLC04", stage:"Resistance welding", date:"16/05/2026", ts:"13:48:00", te:"14:04:30", ok:240, ng:0, adj:0}
+];
+function rowClass(r){
+  if(r.ng>0) return "row-ng";
+  if(r.adj>0) return "row-adj";
+  return "row-ok";
+}
+function renderHistory(rows){
+  const data = rows || HIST;
+  const body = document.getElementById('history-body');
+  if(data.length===0){
+    body.innerHTML = `<tr><td colspan="8" style="padding:18px;color:#888">Không có dữ liệu phù hợp bộ lọc.</td></tr>`;
+    return;
+  }
+  body.innerHTML = data.map(r=>`
+    <tr class="${rowClass(r)}">
+      <td>${r.date}<br>${r.ts}</td>
+      <td>${r.date}<br>${r.te}</td>
+      <td>${r.code}</td>
+      <td style="text-align:left">${r.stage}</td>
+      <td><b>${r.ok}</b></td><td><b>${r.ng}</b></td><td><b>${r.adj}</b></td><td><b>${r.ok+r.ng+r.adj}</b></td>
+    </tr>`).join('');
+}
+function filteredHistory(){
+  const sel = document.getElementById('hist-plc');
+  const code = sel ? sel.value : 'All';
+  return code==='All' ? HIST : HIST.filter(r=>r.code===code);
+}
+function searchHistory(){ renderHistory(filteredHistory()); }
+function resetHistory(){
+  const sel = document.getElementById('hist-plc'); if(sel) sel.value = 'All';
+  const ins = document.querySelectorAll('#page-history .filter-row input');
+  if(ins[0]) ins[0].value = '16/05/2026 06:00';
+  if(ins[1]) ins[1].value = '16/05/2026 18:00';
+  renderHistory(HIST);
+}
+
+/* Export CSV — UTF-8 BOM (giống FormSettings 25T01) */
+function exportHistoryCSV(){
+  const rows = filteredHistory();
+  const head = ["Time start","Time stop","PLC","Stage","OK","NG","Need adjust","Total"];
+  const esc = v => `"${String(v).replace(/"/g,'""')}"`;
+  const lines = [head.map(esc).join(",")];
+  rows.forEach(r=>lines.push([`${r.date} ${r.ts}`,`${r.date} ${r.te}`,r.code,r.stage,r.ok,r.ng,r.adj,r.ok+r.ng+r.adj].map(esc).join(",")));
+  const blob = new Blob(["﻿"+lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "history_export.csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ============ TRACE TIMELINE ============ */
+const TRACE = [
+  {no:1, code:"PLC01", nm:"BASE feeding", res:"OK", data:"Base2D match: 37/40 (A)"},
+  {no:2, code:"PLC02", nm:"Winding", res:"OK", data:"Tension: 0.42 cN"},
+  {no:3, code:"PLC03", nm:"Wire position", res:"OK", data:"X: +0.04mm · Y: -0.02mm"},
+  {no:4, code:"PLC04", nm:"Resistance welding", res:"ADJ", data:"V:3.18 · I:17.42 · ΔT:-0.16"},
+  {no:5, code:"PLC05", nm:"Core assy", res:"OK", data:"L: 12.42 µH"},
+  {no:6, code:"PLC06", nm:"BUSH assy", res:"OK", data:"Case2D: 38/40 (A) · H:4.20mm"},
+  {no:7, code:"PLC07", nm:"Resin potting", res:"OK", data:"A:1.42ml · B:1.40ml"},
+  {no:8, code:"PLC08", nm:"Coil-CASE assy", res:"OK", data:"F:8.95N · H:8.20mm"},
+  {no:9, code:"PLC09", nm:"Hoop-C assy", res:"OK", data:"CCD: OK"},
+  {no:10, code:"PLC10", nm:"Soldering", res:"OK", data:"Wire feed: 3.42mm"},
+  {no:11, code:"PLC11", nm:"Solder inspection", res:"NG", data:"Height: 0.14mm (< 0.18) · 3D NG"},
+  {no:12, code:"PLC12", nm:"COVER assy", res:"—", data:"Skipped (NG @ PLC11)"},
+  {no:13, code:"PLC13", nm:"Drying", res:"—", data:"Skipped"},
+  {no:14, code:"PLC14", nm:"Final inspection", res:"—", data:"Skipped"}
+];
+function renderTrace(){
+  document.getElementById('trace-track').innerHTML = TRACE.map(s=>{
+    const cls = s.res==='OK'?'ok':(s.res==='NG'?'ng':(s.res==='ADJ'?'adj':''));
+    const tagCls = s.res==='OK'?'ok':(s.res==='NG'?'ng':(s.res==='ADJ'?'adj':''));
+    const hasImg = s.no===1 || s.no===6 || s.no===11;
+    return `<div class="step ${cls}">
+      <div class="no">${s.code}</div>
+      <div class="nm">${s.nm}</div>
+      <div class="res"><span>15:${(20+s.no).toString().padStart(2,'0')}</span>${s.res!=='—'?`<span class="tag ${tagCls}">${s.res}</span>`:''}</div>
+      ${hasImg?`<div class="thumb" onclick="openImg('${s.code}')">📷 NG.jpg</div>`:''}
+      <div class="data">${s.data}</div>
+    </div>`;
+  }).join('');
+}
+function loadTrace(){renderTrace()}
+
+/* ============ NG GALLERY ============ */
+// Expanded mock data: ~60 NG entries
+const CAMS = [
+  {cam:"CAM01", plc:"PLC01", defects:["BASE 2D match (D)","BASE 2D match (C)","Insertion CCD"]},
+  {cam:"CAM03", plc:"PLC03", defects:["Wire position X","Wire position Y"]},
+  {cam:"CAM05", plc:"PLC05", defects:["CCD core insert"]},
+  {cam:"CAM06", plc:"PLC06", defects:["BUSH crack","CASE 2D match (D)"]},
+  {cam:"CAM11A", plc:"PLC11", defects:["Solder height","Solder volume","3D camera NG"]},
+  {cam:"CAM14", plc:"PLC14", defects:["Pin position","Weight NG","Date marking missing"]}
+];
+function pad(n,w=4){return String(n).padStart(w,'0')}
+const NG_IMGS = (()=>{
+  const arr=[]; let serial=1423;
+  const dates=["260516","260516","260516","260515","260515","260514"];
+  for(let i=0;i<60;i++){
+    const camIdx = Math.floor(Math.random()*CAMS.length);
+    const c = CAMS[camIdx];
+    const defect = c.defects[Math.floor(Math.random()*c.defects.length)];
+    const date = dates[Math.floor(Math.random()*dates.length)];
+    const hh = pad(13+Math.floor(Math.random()*4),2);
+    const mm = pad(Math.floor(Math.random()*60),2);
+    const ss = pad(Math.floor(Math.random()*60),2);
+    arr.push({
+      case:`A0SEV-${date}-${pad(serial-i,7)}`,
+      cam:c.cam, plc:c.plc, defect,
+      time:`${hh}:${mm}:${ss}`,
+      dateStr:`${date.slice(4,6)}/${date.slice(2,4)}/20${date.slice(0,2)}`
+    });
+  }
+  return arr;
+})();
+
+const PAGE_SIZE = 24;
+let curPage = 1;
+
+function renderGallery(){
+  const total = NG_IMGS.length;
+  const pages = Math.ceil(total/PAGE_SIZE);
+  if(curPage>pages) curPage = pages;
+  if(curPage<1) curPage = 1;
+  const start = (curPage-1)*PAGE_SIZE;
+  const end = Math.min(start+PAGE_SIZE, total);
+  const slice = NG_IMGS.slice(start, end);
+
+  document.getElementById('gallery-grid').innerHTML = slice.map(i=>`
+    <div class="ng-card" onclick="openImg('${i.case}')">
+      <div class="img" loading="lazy">
+        <div class="defect" style="top:${20+Math.random()*30}%;left:${20+Math.random()*30}%"></div>
+      </div>
+      <div class="info">
+        <div class="case">${i.case}</div>
+        <div class="meta">${i.cam} · ${i.plc} · ${i.dateStr} ${i.time}</div>
+        <span class="badge">${i.defect}</span>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('pag-from').textContent = total===0?0:(start+1);
+  document.getElementById('pag-to').textContent = end;
+  document.getElementById('pag-total').textContent = total;
+  document.getElementById('pag-info').textContent = `Trang ${curPage} / ${pages||1}`;
+  document.getElementById('pag-prev').disabled = curPage<=1;
+  document.getElementById('pag-next').disabled = curPage>=pages;
+}
+function changePage(d){curPage+=d;renderGallery()}
+
+// Filter-discipline: disable Search until at least one filter is chosen
+function wireGalleryFilters(){
+  const filterRoot = document.querySelector('#page-gallery .gallery-filters');
+  if(!filterRoot) return;
+  const searchBtn = Array.from(filterRoot.querySelectorAll('button')).find(b=>/search/i.test(b.textContent));
+  if(!searchBtn) return;
+  const inputs = filterRoot.querySelectorAll('input,select');
+  const initial = new Map();
+  inputs.forEach(el=>initial.set(el, el.value));
+  function recheck(){
+    let changed = false;
+    inputs.forEach(el=>{ if(el.value!==initial.get(el)) changed=true; });
+    searchBtn.disabled = !changed;
+    searchBtn.title = changed ? "" : "Chọn ít nhất 1 filter (time / camera / defect) để tìm";
+  }
+  inputs.forEach(el=>el.addEventListener('input',recheck));
+  inputs.forEach(el=>el.addEventListener('change',recheck));
+  recheck();
+}
+
+/* ============ TREND CHART ============ */
+let trendChart = null;
+function drawTrend(){
+  if(trendChart){return}
+  if(typeof Chart === 'undefined'){drawTrendFallback();return}
+  const ctx = document.getElementById('trend-canvas');
+  const labels = [], data = [];
+  for(let i=29;i>=0;i--){
+    labels.push(`-${i}m`);
+    let v = 17.4 + Math.sin(i*0.5)*0.4 + (Math.random()-0.5)*0.3;
+    if(i===4) v = 19.82;
+    data.push(v.toFixed(2));
+  }
+  trendChart = new Chart(ctx, {
+    type:'line',
+    data:{labels, datasets:[
+      {label:'Welding current (A)', data, borderColor:'#1E88E5', backgroundColor:'rgba(30,136,229,.1)', tension:.3, fill:true, pointRadius:2, pointBackgroundColor:(c)=>c.parsed.y>18.5||c.parsed.y<16.5?'#C9272F':'#1E88E5'},
+      {label:'UCL 18.50A', data:new Array(30).fill(18.5), borderColor:'#C9272F', borderDash:[6,4], pointRadius:0, fill:false},
+      {label:'LCL 16.50A', data:new Array(30).fill(16.5), borderColor:'#C9272F', borderDash:[6,4], pointRadius:0, fill:false}
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      scales:{y:{min:15.5,max:20.5,title:{display:true,text:'A'}}},
+      plugins:{legend:{labels:{font:{size:11}},position:'bottom'}}
+    }
+  });
+}
+
+function drawTrendFallback(){
+  // Pure-SVG fallback chart if Chart.js CDN is unavailable
+  const w=900,h=160,pad=30;
+  const pts=[];
+  for(let i=29;i>=0;i--){
+    let v = 17.4 + Math.sin(i*0.5)*0.4 + (Math.random()-0.5)*0.3;
+    if(i===4) v=19.82;
+    pts.push(v);
+  }
+  const min=15.5,max=20.5;
+  const xs = i => pad + i*(w-pad-10)/29;
+  const ys = v => h-20 - (v-min)/(max-min)*(h-30);
+  const ucl=ys(18.5), lcl=ys(16.5);
+  const path = pts.map((v,i)=> (i===0?'M':'L')+xs(i)+','+ys(v)).join(' ');
+  const dots = pts.map((v,i)=>`<circle cx="${xs(i)}" cy="${ys(v)}" r="2.5" fill="${v>18.5||v<16.5?'#C9272F':'#1E88E5'}"/>`).join('');
+  document.getElementById('trend-canvas').outerHTML = `<svg viewBox="0 0 ${w} ${h}" class="trend-canvas" preserveAspectRatio="none">
+    <rect x="0" y="0" width="${w}" height="${h}" fill="#fff"/>
+    <line x1="${pad}" y1="${h-20}" x2="${w-10}" y2="${h-20}" stroke="#888"/>
+    <line x1="${pad}" y1="10" x2="${pad}" y2="${h-20}" stroke="#888"/>
+    <line x1="${pad}" y1="${ucl}" x2="${w-10}" y2="${ucl}" stroke="#C9272F" stroke-dasharray="6,4"/>
+    <line x1="${pad}" y1="${lcl}" x2="${w-10}" y2="${lcl}" stroke="#C9272F" stroke-dasharray="6,4"/>
+    <text x="${w-12}" y="${ucl-3}" text-anchor="end" font-size="10" fill="#C9272F">UCL 18.50A</text>
+    <text x="${w-12}" y="${lcl+12}" text-anchor="end" font-size="10" fill="#C9272F">LCL 16.50A</text>
+    <text x="4" y="14" font-size="10" fill="#444">A</text>
+    <text x="4" y="${ys(20)+3}" font-size="9" fill="#444">20</text>
+    <text x="4" y="${ys(18)+3}" font-size="9" fill="#444">18</text>
+    <text x="4" y="${ys(16)+3}" font-size="9" fill="#444">16</text>
+    <text x="${pad}" y="${h-6}" font-size="9" fill="#444">-30m</text>
+    <text x="${(w+pad)/2}" y="${h-6}" font-size="9" fill="#444" text-anchor="middle">-15m</text>
+    <text x="${w-10}" y="${h-6}" font-size="9" fill="#444" text-anchor="end">now</text>
+    <path d="${path}" fill="none" stroke="#1E88E5" stroke-width="2"/>
+    ${dots}
+  </svg>`;
+}
+
+/* ============ MISC ============ */
+function openImg(code){document.getElementById('img-title').textContent='NG image — '+code;document.getElementById('img-bd').classList.add('show')}
+function closeImg(){document.getElementById('img-bd').classList.remove('show')}
+
+/* ============ FAB: ĐỀ XUẤT DỮ LIỆU (tag cần Nittoku bổ sung) ============ */
+const SUGGEST_PENDING = "Hướng tra cứu lịch sử (theo Job card/lô-ca HAY theo từng sản phẩm) + đếm sản lượng OK/NG/Adjust + mốc thời gian + trigger đọc dữ liệu — PHỤ THUỘC Sumida chốt (Q28/Q32). IO MAP 26T01 hiện KHÔNG có tag Job card/PO/OP ID/Material; nếu Sumida cần Job card sẽ bật lại các cột đó. Tạm hoãn, chờ khách.";
+const SUGGEST_PLC = {
+  PLC01: {
+    ns: "PLC01_BASE",
+    have: [
+      ["Machine.Status",         "Machine Status (Run/Stop/Error) + mốc thời gian Lịch sử lỗi"],
+      ["Trace.MaterialLot",      "Traceability — Mã NVL BASE (carton/pallet)"],
+      ["Trace.Carrier2D",        "Traceability — Mã 2D carrier"],
+      ["Trace.WindingChuck2D",   "Traceability — Mã 2D winding chuck"],
+      ["Trace.Base2D",           "Traceability — Mã 2D BASE (khóa chính truy xuất)"],
+      ["Quality.Base2DMatching", "Inspection — Điểm matching mã 2D BASE (grade ISO 15415)"],
+      ["Quality.CCD_Result",     "Inspection — Kết quả CCD cắm phôi (OK/NG)"]
+    ],
+    need: [
+      ["Alarm.Code", "Lịch sử lỗi — Nội dung lỗi (kèm bảng mã → nội dung)"]
+    ]
+  }
+};
+const SUGGEST_GENERAL = [
+  ["Alarm.Code", "Lịch sử lỗi — Nội dung lỗi (kèm bảng mã → nội dung)"]
+];
+function openSuggest(){
+  const onDetail = document.getElementById('page-detail').classList.contains('active');
+  const code = onDetail ? activePLC : null;
+  const conf = code && SUGGEST_PLC[code];
+  let html = `<p style="margin:0 0 12px;color:#555;font-size:12px">Dữ liệu để màn hình hiển thị đầy đủ — phần <b>Cần bổ sung</b> cần Nittoku thêm tag trên PLC:</p>`;
+  const needRow = (tag,use)=>`<tr><td><code>${tag}</code></td><td><span class="pill adj">Cần bổ sung</span></td><td>${use}</td></tr>`;
+  const haveRow = (tag,use)=>`<tr><td><code>${tag}</code></td><td><span class="pill ok">Có sẵn</span></td><td>${use}</td></tr>`;
+  if(conf){
+    const ns = conf.ns;
+    html += `<table class="sg-table"><thead><tr><th>Tag</th><th>Trạng thái</th><th>Phục vụ / Ghi chú</th></tr></thead><tbody>`
+      + conf.need.map(n=>needRow(`${ns}.${n[0]}`, n[1])).join('')
+      + conf.have.map(h=>haveRow(`${ns}.${h[0]}`, h[1])).join('')
+      + `</tbody></table>`;
+    html += `<div style="font-size:11px;color:#888;margin-top:8px">Ngữ cảnh: <b>${code}</b> · namespace <code>${ns}</code></div>`;
+  } else {
+    html += `<table class="sg-table"><thead><tr><th>Tag (mọi PLC, namespace PLCxx_&lt;Stage&gt;)</th><th>Trạng thái</th><th>Phục vụ / Ghi chú</th></tr></thead><tbody>`
+      + SUGGEST_GENERAL.map(n=>needRow(`PLCxx_<Stage>.${n[0]}`, n[1])).join('')
+      + `</tbody></table>`;
+    html += `<div style="font-size:11px;color:#888;margin-top:8px">Mở chi tiết 1 PLC để xem danh sách tag cụ thể của trạm đó.</div>`;
+  }
+  html += `<div class="sg-pending">⏳ <b>Chờ Sumida chốt:</b> ${SUGGEST_PENDING}</div>`;
+  html += `<div class="sg-nodep">ℹ KHÔNG cần thêm tag: <b>Connection (PC↔PLC)</b> và phát hiện dữ liệu cũ/stale — lấy từ <b>quality flag của OPC</b> (Comm Failure / Last Known). Xác nhận theo manual DeviceXPlorer.</div>`;
+  document.getElementById('suggest-body').innerHTML = html;
+  document.getElementById('suggest-bd').classList.add('show');
+}
+function closeSuggest(){ document.getElementById('suggest-bd').classList.remove('show'); }
+
+/* ============ LANG ============ */
+const I18N = {
+  vi:{ "nav.overview":"Tổng quan Line","nav.detail":"Chi tiết PLC","nav.history":"Lịch sử sản xuất","nav.trace":"Truy xuất Serial","nav.gallery":"Ảnh NG",
+       "overview.title":"Tổng quan dây chuyền — 14 PLC / 19 Camera",
+       "history.title":"Lịch sử sản xuất","trace.title":"Truy xuất theo Serial (CASE 2D / BASE 2D)",
+       "gallery.title":"Thư viện ảnh NG (19 Camera Keyence CV-X350F)",
+       "btn.prodhist":"Lịch sử sản xuất","btn.alarms":"Lịch sử lỗi","btn.settings":"Cấu hình","btn.back":"Quay lại","btn.logout":"Đăng xuất",
+       "detail.running":"Running","detail.lastrun":"Last Run"},
+  en:{ "nav.overview":"Line Overview","nav.detail":"PLC Detail","nav.history":"Production History","nav.trace":"Serial Trace","nav.gallery":"NG Images",
+       "overview.title":"Production Line Overview — 14 PLC / 19 Cameras",
+       "history.title":"Production History","trace.title":"Serial Trace (CASE 2D / BASE 2D)",
+       "gallery.title":"NG Image Gallery (19 Keyence CV-X350F Cameras)",
+       "btn.prodhist":"Production History","btn.alarms":"Alarm History","btn.settings":"Settings","btn.back":"Back","btn.logout":"Logout",
+       "detail.running":"Running","detail.lastrun":"Last Run"}
+};
+const LANG_ICONS = {              // giống 25T01: en → cờ Anh (flag), vi → quả địa cầu (world)
+  vi: 'assets/world.png',
+  en: 'assets/flag.png'
+};
+let currentLang = 'vi';
+function toggleLang(){
+  currentLang = currentLang === 'vi' ? 'en' : 'vi';
+  setLang(currentLang);
+}
+function setLang(l){
+  const btn = document.getElementById('lang-btn');
+  btn.src = LANG_ICONS[l];
+  btn.title = 'Language';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.dataset.i18n; if(I18N[l][k]) el.textContent = I18N[l][k];
+  });
+}
+
+/* ============ CLOCK (footer — giống FormMain WinForms) ============ */
+function tickClock(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('sb-clock').textContent =
+    `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+
+/* ============ INIT ============ */
+renderPLCs();
+renderHistory();
+renderAlarmsPage();
+renderTrace();
+renderGallery();
+wireGalleryFilters();
+tickClock();
+setInterval(tickClock, 1000);
+</script>
+</body>
+</html>
