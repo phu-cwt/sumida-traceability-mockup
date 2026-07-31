@@ -39,7 +39,7 @@ function renderProd(){
     }
     if(!inScope){
       return `<tr style="opacity:.5"><td class="l">${p.code} — ${p.stage}</td><td><span class="mono">${p.mes}</span></td>
-        <td colspan="8" style="background:#F6F6F6;color:#999;text-align:left">Ngoài phạm vi đang chọn</td></tr>`;
+        <td colspan="8" style="background:#F6F6F6;color:#999;text-align:left">${T('ct.outscope')}</td></tr>`;
     }
     if(f===0){
       return `<tr style="opacity:.6"><td class="l">${p.code} — ${p.stage}</td><td><span class="mono">${p.mes}</span></td>
@@ -199,15 +199,15 @@ function renderCT(){
     if(PLAN_CT[i]===null){
       return `<tr style="opacity:.75"><td class="l"><b>${p.code}</b></td><td class="l">${p.stage} <span class="mono">${p.mes}</span></td>
         <td colspan="3" style="background:#F2F2F2;color:#777;text-align:left">
-          — <i>(không áp dụng — công đoạn sấy: lò giữ sản phẩm ~23 giờ, không có chu kỳ theo sản phẩm)</i></td></tr>`;
+          — <i>(${T('ct.ovenna')})</i></td></tr>`;
     }
     const derived = Math.round(LOSS_TS[i][1]*60/PLAN_CT[i]);
     const gap = TARGET_QTY[i]!==null ? TARGET_QTY[i]-derived : 0;
     return `<tr><td class="l"><b>${p.code}</b></td><td class="l">${p.stage} <span class="mono">${p.mes}</span></td>
       <td><input type="text" value="${PLAN_CT[i].toFixed(1)}" onchange="setPlanCT(${i},this.value)"
-        title="計画Cycleタイム — giây / sản phẩm" style="width:62px;${inpCss}"> <span class="small">s/pc</span></td>
+        title="計画Cycleタイム — ${T('set.ctunit')}" style="width:62px;${inpCss}"> <span class="small">s/pc</span></td>
       <td><input type="text" value="${nf(TARGET_QTY[i])}" onchange="setTargetQty(${i},this.value)"
-        title="目標生産数量入力 — nhập tay, dùng tính 達成率" style="width:82px;${inpCss}"></td>
+        title="目標生産数量入力 — ${T('set.targetnote')}" style="width:82px;${inpCss}"></td>
       <td title="動作時間 ${LOSS_TS[i][1]}m × 60 ÷ ${PLAN_CT[i].toFixed(1)}s">${nf(derived)}
         ${gap? `<span class="small" style="color:${Math.abs(gap)>derived*0.05?'#C9272F':'#888'}">(${gap>0?'+':''}${nf(gap)})</span>`:''}</td></tr>`;
   }).join('');

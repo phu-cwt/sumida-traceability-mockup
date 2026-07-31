@@ -15,7 +15,7 @@
     font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
   .ov-head{flex-shrink:0;background:#fff;padding:0;margin-bottom:9px}
   .ov-head .ctxbar{margin:0 0 9px}
-  .ov-head .kpi-bar{border:0;padding:0;margin-bottom:0;background:transparent}
+  .ov-head .kpi-bar{border:2px solid #1B1B1B;padding:9px;margin-bottom:0;background:#fff}
   /* Tab kiểu GẠCH CHÂN: nền sáng phẳng, tab đang chọn đánh dấu bằng vạch vàng dưới chân
      thay vì đổ nền xám. Bỏ vạch ngăn dọc giữa các tab — chữ đậm/nhạt đã đủ phân biệt. */
   .ov-frame > .subtabs{border:0;border-bottom:1px solid #C9C9C9;background:transparent}
@@ -37,7 +37,9 @@
 
   /* ===== TOP PAGE — BẢNG SẢN LƯỢNG THEO MÁY =====
      Thay lưới card cũ: dự án sau 20–30 máy thì lưới card vỡ bố cục, bảng thì không. */
-  .ov-prod{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #1B1B1B}
+  /* Viền 1px: bảng đã nằm trong .ov-frame (2px) nên để 2px nữa thành hai khung đen dày
+     lồng nhau chỉ cách 11px, nhìn rất nặng. */
+  .ov-prod{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1px solid #1B1B1B}
   .ov-prod .tblwrap{flex:1;min-height:0;overflow:auto;border:none;max-height:none}
   /* Bảng giãn kín chiều cao còn lại — cùng cách xử lý với timeline realtime, để 2 tab
      của Top Page cao bằng nhau. `height:100%` khiến các dòng chia đều phần dư. */

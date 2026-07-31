@@ -41,9 +41,9 @@ function renderRt(){
   if(rtScope==='day'){
     const nowOff=nowDayOffset(), total=1440;
     document.getElementById('rt-now').innerHTML =
-      `<span class="live-dot"></span>Hôm nay: <b>${fmtD(date)}</b> · toàn ngày (S1→S2→S3) · đang ở ca <b>${currentShiftId()}</b>`;
+      `<span class="live-dot"></span>${T('ov.today')} <b>${fmtD(date)}</b> · ${T('ov.allday')} <b>${currentShiftId()}</b>`;
     document.getElementById('rt-sub').innerHTML =
-      `Đã trôi qua ${hm(nowOff)} / 24h · ${SHIFT_ORDER.filter((s,si)=>(si+1)*SHIFT_MIN<=nowOff).length} ca đã xong · lịch: ${lineShiftsOn(date).join(', ')||'nghỉ'}`;
+      `${T('ov.elapsed')} ${hm(nowOff)} / 24h · ${SHIFT_ORDER.filter((s,si)=>(si+1)*SHIFT_MIN<=nowOff).length} ${T('ov.shiftsdone')} · ${T('ov.sched')} ${lineShiftsOn(date).join(', ')||T('ov.dayoff')}`;
     let ticks=''; for(let m=0;m<=total;m+=SHIFT_MIN) ticks+=tickHtml(m, total, minToClock(DAY_START+m));
     SHIFT_ORDER.forEach((s,k)=>{ ticks+=`<div class="tl-tick" style="left:${(k*SHIFT_MIN+240)/total*100}%;color:#1E88E5;font-weight:800">${s}</div>`; });
     const marks=[SHIFT_MIN,SHIFT_MIN*2].map(m=>`<div class="tl-shiftmark" style="left:${m/total*100}%"></div>`).join('');
@@ -69,9 +69,9 @@ function renderRt(){
     const shift=currentShiftId(), total=SHIFT_MIN, shiftStart=SHIFT_START[shift];
     const elapsed=Math.max(0, Math.min(total, nowMin()-shiftStart));
     document.getElementById('rt-now').innerHTML =
-      `<span class="live-dot"></span>${T('pr.shift')} hiện tại: <b>${shift} (${SHIFT_HM[shift]})</b> · ${fmtD(date)}`;
+      `<span class="live-dot"></span>${T('pr.shift')} ${T('ov.curshift')} <b>${shift} (${SHIFT_HM[shift]})</b> · ${fmtD(date)}`;
     document.getElementById('rt-sub').innerHTML =
-      `Đã trôi qua ${hm(elapsed)} / ${hm(total)} · lịch hôm nay: ${lineShiftsOn(date).join(', ')||'nghỉ'}`;
+      `${T('ov.elapsed')} ${hm(elapsed)} / ${hm(total)} · ${T('ov.schedtoday')} ${lineShiftsOn(date).join(', ')||T('ov.dayoff')}`;
     let ticks=''; for(let m=0;m<=total;m+=60) ticks+=tickHtml(m, total, minToClock(shiftStart+m));
     const nowHTML = (elapsed>0 && elapsed<total) ? `<div class="tl-now" style="left:${elapsed/total*100}%"></div>` : '';
     root.innerHTML = `<div class="tl-ruler-row"><div></div><div class="tl-ruler">${ticks}</div></div>`

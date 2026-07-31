@@ -7,7 +7,7 @@ function renderTsRows(idx, nShift){
     if(!idx.includes(i)){
       return `<div class="ts-row" style="opacity:.55;cursor:default">
         <div class="name">${p.code}<small>${p.mes}</small></div>
-        <div class="ts-bar" style="background:#E0E0E0;justify-content:center;color:#777;font-weight:700">Ngoài phạm vi đang chọn</div>
+        <div class="ts-bar" style="background:#E0E0E0;justify-content:center;color:#777;font-weight:700">${T('ct.outscope')}</div>
         <div class="oee" style="color:#aaa">—</div></div>`;
     }
     const t=LOSS_TS[i], tot=ACTUAL_MIN;
@@ -18,7 +18,7 @@ function renderTsRows(idx, nShift){
         data-j="${j}" data-dur="${dur(v*nShift)}" data-pct="${w.toFixed(1)}">${dur(v*nShift)}</div>`;
     }).join('');
     const o=Math.round(t[1]/tot*100);
-    return `<div class="ts-row" onclick="openMachine(${i})" title="Bấm để xem chi tiết ${p.code}">
+    return `<div class="ts-row" onclick="openMachine(${i})" title="${TF('ct.clickdetail', p.code)}">
       <div class="name">${p.code}<small>${p.mes}</small></div>
       <div class="ts-bar">${segs}</div>
       <div class="oee" style="color:${o<75?'#C9272F':(o<85?'#B8860B':'#1E8A2E')}">${o}%</div></div>`;
@@ -62,7 +62,7 @@ function renderHeat(){
     const cells=cols.map((c,ci)=>{
       let off=false;
       if(c.dt){ off = lossPeriod==='shift' ? !lineRuns(lossShift,c.dt) : shiftsInDay(c.dt)===0; }
-      if(off) return `<td class="off" title="${p.code}: line nghỉ kỳ này">–</td>`;
+      if(off) return `<td class="off" title="${p.code}: ${T('ct.lineoffperiod')}">–</td>`;
       let o=baseA*(0.92+jit(i,ci)*0.14); if(o>0.985)o=0.985;
       const v=Math.round(o*100), col=v<75?'#C9272F':(v<85?'#E8A33D':'#2E9E4F');
       return `<td class="hm" style="background:${col}" title="${p.code}: 実稼働率 ${v}%">${v}</td>`;
@@ -76,7 +76,7 @@ function renderPareto(sum, actual){
   const total=cats.reduce((s,x)=>s+x.v,0)||1, max=cats[0].v||1;
   document.getElementById('loss-pareto').innerHTML=cats.map(x=>{
     const share=(x.v/total*100).toFixed(0);
-    return `<div class="par-row" title="${x.k}: ${hm(x.v)} (${share}% tổn thất)">
+    return `<div class="par-row" title="${x.k}: ${hm(x.v)} (${share}% ${T('lo.lossword')})">
       <div class="plbl">${x.k}</div>
       <div class="par-bar"><div class="fill" style="width:${x.v/max*100}%;background:${x.c}"></div></div>
       <div class="pval">${dur(x.v)} · ${share}%</div></div>`;
@@ -120,15 +120,15 @@ function openMachine(i){
       <div class="la-kpi ng"><div class="lbl">${T('st.loss')}</div><div class="val">${hm(tot-t[1])}</div></div>
       <div class="la-kpi"><div class="lbl">${T('pd.ct')}</div><div class="val">${ct?ct.toFixed(1)+'s':'—'}</div></div>
     </div>
-    <b style="font-size:13px">Nguyên nhân tổn thất (thời gian / 1 ca)</b>
+    <b style="font-size:13px">${T('mc.causes')}</b>
     <div style="margin-top:8px">${cats.map(x=>`<div class="par-row"><div class="plbl">${x[0]}</div>
       <div class="par-bar"><div class="fill" style="width:${x[1]/maxL*100}%;background:${x[2]}"></div></div>
       <div class="pval">${hm(x[1])}</div></div>`).join('')}</div>
-    <b style="font-size:13px;display:block;margin-top:14px">Xu hướng 実稼働率 7 kỳ gần nhất</b>
+    <b style="font-size:13px;display:block;margin-top:14px">${T('mc.trend')}</b>
     <div class="trend" style="height:120px;margin-top:6px">${trend.map((v,d)=>`<div class="tg">
       <div class="tb" style="height:${v/100*95}px;background:${v<75?'#C9272F':(v<85?'#E8A33D':'#2E9E4F')}"></div>
       <div class="tx">${WDAYS[d]}<br><b>${v}%</b></div></div>`).join('')}</div>
-    <div class="note" style="margin-top:14px">→ Liên kết: <b>Lịch sử lỗi</b> của ${p.code} · <b>Truy xuất Serial</b> (mã công đoạn ${p.mes}) · <b>Chi tiết máy</b>.</div>`;
+    <div class="note" style="margin-top:14px">${TF('mc.links', p.code, p.mes)}</div>`;
   document.getElementById('mc-bd').classList.add('show');
 }
 function closeMachine(){ document.getElementById('mc-bd').classList.remove('show'); }

@@ -82,7 +82,7 @@
         <div class="kpi ok"><div class="lbl" data-i18n="pd.ok">Hàng đạt (OK)</div><div class="val" id="kpi-ok">3,287</div></div>
         <div class="kpi ng"><div class="lbl" data-i18n="pd.ng">Hàng lỗi (NG)</div><div class="val" id="kpi-ng">29</div></div>
         <div class="kpi yld"><div class="lbl" data-i18n="pd.wip">Đang trong chuyền (WIP)</div><div class="val">—</div></div>
-        <div class="kpi"><div class="lbl" data-i18n="ov.alarmopen">Lỗi chưa xử lý</div><div class="val" style="color:#C9272F">3</div></div>
+        <div class="kpi"><div class="lbl" data-i18n="ov.alarmopen">Máy lỗi chưa xử lý</div><div class="val" style="color:#C9272F">3</div></div>
       </div>
     </div>
 
@@ -129,7 +129,7 @@
         <div id="rt-timeline"></div>
         <!-- Ý nghĩa từng màu đã có ở chú giải ngay trên dải, ô xám nhạt cũng tự ghi chữ
              "Chưa tới" ⇒ ghi chú này chỉ giữ phần chú giải KHÔNG nói được. -->
-        <div class="note" style="margin-top:6px"><span class="cfmchip">ⓘ cần bổ sung tag PLC</span> Rê chuột 1 đoạn để xem <b>từ mấy giờ → mấy giờ</b> · vạch <b style="color:#1E88E5">NOW</b> = hiện tại · vạch đứt = ranh giới ca · tự làm mới 30 s. IO MAP hiện chỉ có <b class="la-tag">Machine.Status</b> 3 giá trị — chưa tách được 5 trạng thái, xem <b>💡 Đề xuất</b>.</div>
+        <div class="note" style="margin-top:6px" data-i18n-html="note.rt"><span class="cfmchip">ⓘ cần bổ sung tag PLC</span> Rê chuột 1 đoạn để xem <b>từ mấy giờ → mấy giờ</b> · vạch <b style="color:#1E88E5">NOW</b> = hiện tại · vạch đứt = ranh giới ca · tự làm mới 30 s. IO MAP hiện chỉ có <b class="la-tag">Machine.Status</b> 3 giá trị — chưa tách được 5 trạng thái, xem <b>💡 Đề xuất</b>.</div>
       </div>
     </div>
     </div>
@@ -204,7 +204,7 @@
           <div class="bd">
             <div id="loss-pareto"></div>
             <div class="note" id="loss-pareto-note"></div>
-            <div class="note">Nếu WPF phát sinh chi phí thư viện chart: thay bằng <b>bảng xếp hạng có thanh nền</b> — số liệu không đổi.</div>
+            <div class="note" data-i18n-html="note.pareto">Nếu WPF phát sinh chi phí thư viện chart: thay bằng <b>bảng xếp hạng có thanh nền</b> — số liệu không đổi.</div>
           </div>
         </div>
         <div class="card">
@@ -298,7 +298,7 @@
           <h3><span>XU HƯỚNG TỶ LỆ VẬN HÀNH THEO KỲ <span class="optchip">ⓘ tuỳ chọn</span></span><span class="jp">実稼働率 稼動率</span></h3>
           <div class="bd">
             <div class="barchart" id="agg-oee-chart"></div>
-            <div class="note">Trục 0–100% · mục tiêu 85%. Nếu cắt trên WPF: đọc cột <b>実稼働率</b> ở bảng dưới.</div>
+            <div class="note" data-i18n-html="note.trend">Trục 0–100% · mục tiêu 85%. Nếu cắt trên WPF: đọc cột <b>実稼働率</b> ở bảng dưới.</div>
           </div>
         </div>
       </div>
@@ -361,7 +361,7 @@
             <label>End<input type="text" value="06:00"></label>
             <label style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox"> OFF</label>
           </div>
-          <div class="note" style="margin-top:10px">ⓘ Thêm được mẫu ca giờ bất kỳ (VD S1 08:00–16:00). Mục tiêu &amp; Cycle time cài <b>theo từng PLC</b> ở tab kế bên.</div>
+          <div class="note" style="margin-top:10px" data-i18n-html="note.shift">ⓘ Thêm được mẫu ca giờ bất kỳ (VD S1 08:00–16:00). Mục tiêu &amp; Cycle time cài <b>theo từng PLC</b> ở tab kế bên.</div>
         </div>
       </div>
 
@@ -383,11 +383,11 @@
               <tbody id="ct-rows"></tbody>
             </table>
           </div>
-          <div class="note" style="padding:11px 14px">
+          <div class="note" style="padding:11px 14px" data-i18n-html="note.target1">
             ⓘ <b>Cột "Mục tiêu suy ra"</b> = 動作時間 (thời gian chạy) × 60 ÷ Cycle time kế hoạch — cập nhật ngay khi đổi Cycle.
             Cột <b>Sản lượng mục tiêu</b> nhập tay là số dùng tính <b>Tỷ lệ đạt</b> ở màn Lịch sử sản xuất.
           </div>
-          <div class="note" style="padding:0 14px 11px">
+          <div class="note" style="padding:0 14px 11px" data-i18n-html="note.target2">
             <span class="cfmchip">ⓘ cần xác nhận</span> Đơn vị Cycle time là <b>giây / 1 sản phẩm</b> hay <b>giây / 1 lô 4 sản phẩm</b>?
             Data thật cho thấy line ra hàng theo <b>lô 4</b> (4 cavity), ~40 s/lô ≈ 10 s/pc.
           </div>
@@ -448,7 +448,9 @@
 
   <!-- ============ PAGE 4: TRACE ============ -->
   <div class="page" id="page-trace">
-    <div class="note-suggest" style="margin-bottom:10px">
+    <!-- Hai số trong câu này do JS điền (fillTraceMeta) — đổi ngôn ngữ sẽ vẽ lại cả đoạn
+         nên phải điền lại, xem setLang() trong js/13. -->
+    <div class="note-suggest" style="margin-bottom:10px" data-i18n-html="note.traceintro">
       <span class="ic">ⓘ</span><span>Dữ liệu màn này là <b>data sản xuất thật</b> do Sumida gửi
         (<b id="trace-src-rows">—</b> dòng MES export, <b id="trace-src-serials">—</b> serial) — không phải số minh hoạ.
         Serial nào thiếu ở một công đoạn thì hiển thị đúng lý do, không ẩn đi.</span>
@@ -465,13 +467,13 @@
           <option value="case">CASE 2D code</option>
         </select></label>
         <label><span class="cap">Lô sản xuất (tham chiếu):</span><input type="text" id="trace-lot" value="AS11423 · L494" readonly
-                 title="Không còn là khoá tra cứu — truy vết theo từng sản phẩm (serial). Giữ để nhóm báo cáo theo lô."
+                 title="Không còn là khoá tra cứu — truy vết theo từng sản phẩm (serial). Giữ để nhóm báo cáo theo lô." data-i18n-title="tr.lottip"
                  style="min-width:170px;color:#888"></label>
         <button class="btn" onclick="loadTrace()" data-i18n="btn.lookup">Tra cứu</button>
         <div class="grow"></div>
         <button class="btn danger" onclick="printTrace()" data-i18n="btn.exportpdf">Xuất báo cáo PDF</button>
       </div>
-      <div class="note" style="margin-top:8px">ⓘ Truy vết <b>theo từng sản phẩm (serial-level)</b> — chốt 30/07/2026. Ô <b>Lô sản xuất</b> chỉ còn để tham chiếu / nhóm báo cáo, không phải khoá tra cứu.</div>
+      <div class="note" style="margin-top:8px" data-i18n-html="note.trace">ⓘ Truy vết <b>theo từng sản phẩm (serial-level)</b> — chốt 30/07/2026. Ô <b>Lô sản xuất</b> chỉ còn để tham chiếu / nhóm báo cáo, không phải khoá tra cứu.</div>
     </div>
 
     <div class="tr-meta" id="trace-meta"></div>
@@ -508,7 +510,7 @@
       <span style="color:#666">NAS: <b>311 GB/tháng</b> ≈ 3.7 TB/năm · dung lượng đã mua <b>20 TB</b> (RAID1)</span>
     </div>
 
-    <div class="note" style="margin:0 0 10px">ⓘ 8 PLC có camera lưu ảnh: <b>PLC01 · 03 · 05 · 06 · 09 · 11 · 12 · 14</b>. Chính sách lưu: <b>chỉ ảnh NG</b>, 1 ảnh tại trạm phát hiện lỗi.</div>
+    <div class="note" style="margin:0 0 10px" data-i18n-html="note.gallery">ⓘ 8 PLC có camera lưu ảnh: <b>PLC01 · 03 · 05 · 06 · 09 · 11 · 12 · 14</b>. Chính sách lưu: <b>chỉ ảnh NG</b>, 1 ảnh tại trạm phát hiện lỗi.</div>
 
     <div class="gallery-grid" id="gallery-grid"></div>
 
@@ -536,7 +538,7 @@
 </div>
 
 <!-- ============ FAB: ĐỀ XUẤT DỮ LIỆU ============ -->
-<button class="fab" onclick="openSuggest()" title="Dữ liệu đề xuất bổ sung từ Nittoku">💡 Đề xuất</button>
+<button class="fab" onclick="openSuggest()" title="Dữ liệu đề xuất bổ sung từ Nittoku" data-i18n-title="sg.fabtip">💡 Đề xuất</button>
 <div class="modal-backdrop" id="suggest-bd" onclick="closeSuggest()">
   <div class="modal" style="width:640px" onclick="event.stopPropagation()">
     <div class="hd"><span>💡 Cowatech đề xuất — Dữ liệu cần bổ sung</span><span class="x" onclick="closeSuggest()">✕</span></div>
@@ -554,11 +556,11 @@
     <p class="lc-title">Đăng nhập</p>
     <div class="lc-field">
       <img src="assets/profile-user.png" width="22" height="22" style="display:block;flex-shrink:0">
-      <input type="text" id="login-user" placeholder="Tài khoản" value="Admin" readonly tabindex="-1" style="color:#888;cursor:default">
+      <input type="text" id="login-user" placeholder="Tài khoản" data-i18n-ph="lg.user" value="Admin" readonly tabindex="-1" style="color:#888;cursor:default">
     </div>
     <div class="lc-field">
       <img src="assets/lock.png" width="22" height="22" style="display:block;flex-shrink:0">
-      <input type="password" id="login-pass" placeholder="Mật khẩu" value="1" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="login-pass" placeholder="Mật khẩu" data-i18n-ph="lg.pass" value="1" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <div class="lc-error" id="login-error">Sai tài khoản hoặc mật khẩu.</div>
     <button class="lc-btn" onclick="doLogin()">Đăng nhập</button>
@@ -598,6 +600,8 @@
 <!-- Dataset trích từ data thật của khách (sinh bằng script, KHÔNG sửa tay) + từ điển 4 ngôn ngữ -->
 <script src="js/00-mock-data.js"></script>
 <script src="js/00-i18n.js"></script>
+<script src="js/00b-i18n-data-labels.js"></script>
+<script src="js/00c-i18n-ui-text.js"></script>
 
 <!-- ============ MODULE JS (thứ tự nạp CÓ Ý NGHĨA (khai báo phụ thuộc) — xem sync-mockup.sh) ============ -->
 <script src="js/01-app-shell-auth-navigation.js"></script>

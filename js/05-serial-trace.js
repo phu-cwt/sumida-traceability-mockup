@@ -100,14 +100,14 @@ function loadTrace(){
     } else if(recNoCode(rec)){
       cls='nocode'; tag=`<span class="tag" style="background:#7a7a7a">?</span>`;
       const shown = Object.entries(rec.q).map(([k,v])=>String(v==null?'':v).replace(/\u0000/g,'')||'(rỗng)')[0];
-      body = `<div class="data"><b>${shown||'(rỗng)'}</b><br><span style="color:#666">${T('tag.nocode')} — công đoạn CÓ chạy nhưng không ghi được mã nhận dạng</span></div>`;
+      body = `<div class="data"><b>${shown||'(rỗng)'}</b><br><span style="color:#666">${T('tag.nocode')} — ${T('tr.nocodetail')}</span></div>`;
     } else {
       cls = rec.judge==='NG' ? 'ng' : (rec.judge==='OK' ? 'ok' : '');
       tag = rec.judge ? `<span class="tag ${rec.judge==='NG'?'ng':'ok'}">${rec.judge}</span>` : '';
       const rows = Object.entries(rec.q).map(([k,v])=>{
         const f = p.fields[k] || {};
-        const lab = (currentLang==='zh' && f.zh) ? f.zh : (f.vi || k);
-        const tip = `${k} · ${(f.zh||'')}${f.vi?' / '+f.vi:''}`;
+        const lab = (currentLang==='zh' && f.zh) ? f.zh : (f.vi ? TD(f.vi) : k);
+        const tip = `${k} · ${(f.zh||'')}${f.vi?' / '+TD(f.vi):''}`;
         // Chuỗi 材料投入信息 (ngăn bằng ^) → tách ra, KHÔNG cắt cụt làm mất LOT NO
         if(isMaterialStr(v))
           return `<div class="qrow" style="border-bottom:none;padding-top:3px" title="${tip}
@@ -121,7 +121,7 @@ ${v}"><span style="font-weight:700;color:#333">${lab}</span><span></span></div>`
     return `<div class="step ${cls}">
       <div class="no">${p.code}</div>
       <div class="plcref">${p.plc}${p.serialFrom!=='serial'?' · serial ở '+p.serialFrom:''}</div>
-      <div class="nm">${p.nameZh} · ${currentLang==='en'?p.nameEn:p.nameVi}</div>
+      <div class="nm">${p.nameZh} · ${currentLang==='en'?p.nameEn:TD(p.nameVi)}</div>
       <div class="res"><span>${rec? rec.ts.slice(11,16) : '—'}</span>${tag}</div>
       ${(cam && rec && cls!=='nodata')?`<div class="thumb" onclick="openImg('${raw}')">📷 ${cam.id} ${cam.ctrl}</div>`:''}
       ${body}
@@ -132,10 +132,11 @@ ${v}"><span style="font-weight:700;color:#333">${lab}</span><span></span></div>`
   const noSerialProcs = PROCS.filter(p=>p.serialFrom!=='serial');
   const noJudgeProcs  = PROCS.filter(p=>!p.judgeUsable);
   document.getElementById('trace-notes').innerHTML = `
-    <div class="note" style="margin-top:12px">ⓘ Serial này ghi nhận <b>${nWith}/${PROCS.length}</b> công đoạn${nNoCode?`, trong đó <b>${nNoCode}</b> công đoạn có chạy nhưng <b>không đọc được mã</b>`:''}. Độ phủ cao nhất trong toàn bộ data khách gửi là <b>9/14</b> công đoạn.</div>
-    <div class="note"><span class="cfmchip">ⓘ cần xác nhận</span> ${noSerialProcs.length} công đoạn <b>không ghi serial vào trường "Mã theo dõi sản phẩm"</b> — hiện phải đọc từ trường khác trong QData:
-      ${noSerialProcs.map(p=>`<b>${p.code}</b> (${p.serialFrom==='none'?'không có trường nào chứa serial':p.serialFrom})`).join(' · ')}.</div>
-    <div class="note"><span class="cfmchip">ⓘ cần xác nhận</span> Cột <b>"Kết quả OK/NG"</b> chỉ dùng được ở <b>${PROCS.length-noJudgeProcs.length}/${PROCS.length}</b> công đoạn (${PROCS.filter(p=>p.judgeUsable).map(p=>p.code).join(', ')||'—'}) — ${noJudgeProcs.length} công đoạn còn lại trả về 1 giá trị cố định nên <b>không suy được OK/NG</b>.</div>
-    <div class="note">ⓘ Hai công đoạn <b>PLC03</b> (KT vị trí dây, N7001-1) và <b>PLC13</b> (sấy) <b>không xuất hiện</b> trong MES export khách gửi.</div>`;
+    <div class="note" style="margin-top:12px">${TF('tr.note1', nWith, PROCS.length, nNoCode?TF('tr.note1b', nNoCode):'')}</div>
+    <div class="note"><span class="cfmchip">ⓘ ${T('tag.confirm')}</span> ${TF('tr.note2', noSerialProcs.length,
+      noSerialProcs.map(p=>`<b>${p.code}</b> (${p.serialFrom==='none'?T('tr.noserialfield'):p.serialFrom})`).join(' · '))}</div>
+    <div class="note"><span class="cfmchip">ⓘ ${T('tag.confirm')}</span> ${TF('tr.note3', PROCS.length-noJudgeProcs.length, PROCS.length,
+      PROCS.filter(p=>p.judgeUsable).map(p=>p.code).join(', ')||'—', noJudgeProcs.length)}</div>
+    <div class="note">${T('tr.note4')}</div>`;
 }
 function printTrace(){ window.print(); }

@@ -19,16 +19,16 @@ function showTab(group, id){
 /* ============ MISC ============ */
 function openImg(code){
   const rec = NG_IMGS.find(x=>x.case===code) || NG_IMGS[0];
-  document.getElementById('img-title').textContent='Ảnh NG — '+code;
+  document.getElementById('img-title').textContent=T('gal.imgtitle')+' — '+code;
   const b=document.getElementById('img-detail');
   if(b && rec){
     b.innerHTML = `
       <tr><td class="k">${T('th.serial')}</td><td class="mono">${code}</td></tr>
-      <tr><td class="k">Camera / controller</td><td>${rec.camId} — ${rec.plc} · <b>${rec.ctrl}</b> · head ${rec.head}</td></tr>
-      <tr><td class="k">Nội dung kiểm tra</td><td>${rec.use}</td></tr>
-      <tr><td class="k">Loại lỗi</td><td><span class="pill ng">${rec.defect}</span></td></tr>
-      <tr><td class="k">Thời điểm chụp</td><td>${rec.dateStr} ${rec.time}</td></tr>
-      <tr><td class="k">Đường dẫn NAS</td><td class="mono" style="font-size:11px">\\\\NAS-SUMIDA\\NG\\${rec.plc}\\${rec.dateStr.split('/').reverse().join('-')}\\${code}_${rec.camId}.jpg</td></tr>`;
+      <tr><td class="k">${T('gal.camctrl')}</td><td>${rec.camId} — ${rec.plc} · <b>${rec.ctrl}</b> · head ${rec.head}</td></tr>
+      <tr><td class="k">${T('gal.inspuse')}</td><td>${TD(rec.use)}</td></tr>
+      <tr><td class="k">${T('gal.defect')}</td><td><span class="pill ng">${rec.defect}</span></td></tr>
+      <tr><td class="k">${T('gal.shotat')}</td><td>${rec.dateStr} ${rec.time}</td></tr>
+      <tr><td class="k">${T('gal.naspath')}</td><td class="mono" style="font-size:11px">\\\\NAS-SUMIDA\\NG\\${rec.plc}\\${rec.dateStr.split('/').reverse().join('-')}\\${code}_${rec.camId}.jpg</td></tr>`;
     document.getElementById('img-filename').textContent = `${code}_${rec.camId}.jpg`;
   }
   document.getElementById('img-bd').classList.add('show');

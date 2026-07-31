@@ -247,8 +247,12 @@
      phần thừa dồn xuống đáy — vẫn dễ đọc mà không méo tỷ lệ. */
   #rt-timeline .tl-row{flex:1 1 0;min-height:20px;max-height:54px;margin-bottom:0;align-items:stretch}
   #rt-timeline .tl-track{height:auto}
-  #rt-timeline .tl-name{display:flex;flex-direction:column;justify-content:center;font-size:13px}
-  #rt-timeline .tl-name small{font-size:10.5px}
+  /* Mã PLC và mã công đoạn MES nằm CÙNG một dòng. Cột tên phải rộng hơn mặc định 150px
+     vì có máy ghép 2 mã ("N4003-6 + N7004-2"); thước giờ dùng chung con số này để
+     vạch giờ không lệch khỏi các thanh trạng thái. */
+  #rt-timeline .tl-ruler-row,#rt-timeline .tl-row{grid-template-columns:200px 1fr}
+  #rt-timeline .tl-name{display:flex;flex-direction:row;align-items:center;gap:7px;font-size:13px;white-space:nowrap}
+  #rt-timeline .tl-name small{display:inline;font-size:10.5px}
   #rt-timeline .tl-seg,#rt-timeline .tl-off,#rt-timeline .tl-idle,#rt-timeline .tl-future{font-size:11.5px}
   #tab-ov-rt .ctxbar,#tab-ov-rt #rt-sub,#tab-ov-rt .ts-legend,#tab-ov-rt .note{flex:0 0 auto}
 

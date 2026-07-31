@@ -59,14 +59,14 @@ function renderGallery(){
   const slice = rows.slice(start, end);
 
   document.getElementById('gallery-grid').innerHTML = slice.map((i,k)=>`
-    <div class="ng-card" onclick="openImg('${i.case}')" title="${i.ctrl} · ${i.head} · ${i.use}">
+    <div class="ng-card" onclick="openImg('${i.case}')" title="${i.ctrl} · ${i.head} · ${TD(i.use)}">
       <div class="img" loading="lazy">
         <div class="defect" style="top:${22+((k*13)%28)}%;left:${20+((k*7)%30)}%"></div>
       </div>
       <div class="info">
         <div class="case">${i.case}</div>
         <div class="meta">${i.camId} · ${i.plc} · ${i.ctrl} · ${i.dateStr} ${i.time}</div>
-        <span class="badge">${i.defect}</span>
+        <span class="badge">${TD(i.defect)}</span>
       </div>
     </div>
   `).join('');
@@ -93,7 +93,7 @@ function wireGalleryFilters(){
     let changed = false;
     inputs.forEach(el=>{ if(el.value!==initial.get(el)) changed=true; });
     searchBtn.disabled = !changed;
-    searchBtn.title = changed ? "" : "Chọn ít nhất 1 filter (time / camera / defect) để tìm";
+    searchBtn.title = changed ? "" : "${T('gal.filtertip')}";
   }
   inputs.forEach(el=>el.addEventListener('input',recheck));
   inputs.forEach(el=>el.addEventListener('change',recheck));

@@ -32,7 +32,7 @@ function alarmHistoryBlock(code){
       <tr class="${a.resolved?'':'row-ng'}">
         <td>${i+1}</td>
         <td>${a.raised}</td>
-        <td style="text-align:left">${a.content} <span style="color:#888">(${a.code})</span></td>
+        <td style="text-align:left">${TD(a.content)} <span style="color:#888">(${a.code})</span></td>
         <td>${a.resolved || '<b>(chưa giải quyết)</b>'}</td>
         <td>${alarmDuration(a.raised, a.resolved)}</td>
       </tr>`).join('');
@@ -59,7 +59,7 @@ function renderAlarmsPage(rows){
       <td>${i+1}</td>
       <td>${a.plc}</td>
       <td>${a.raised}</td>
-      <td style="text-align:left">${a.content} <span style="color:#888">(${a.code})</span></td>
+      <td style="text-align:left">${TD(a.content)} <span style="color:#888">(${a.code})</span></td>
       <td>${a.resolved || '<b>(chưa giải quyết)</b>'}</td>
       <td>${alarmDuration(a.raised, a.resolved)}</td>
       <td>${a.product || '—'}</td>
@@ -77,7 +77,7 @@ function exportAlarmsCSV(){
   const head = ["No","PLC","Ngày phát sinh","Nội dung lỗi","Mã lỗi","Ngày giải quyết","Thời lượng","Mã 2D SP"];
   const esc = v => `"${String(v).replace(/"/g,'""')}"`;
   const lines = [head.map(esc).join(",")];
-  rows.forEach((a,i)=>lines.push([i+1,a.plc,a.raised,a.content,a.code,a.resolved||"(chưa giải quyết)",alarmDuration(a.raised,a.resolved),a.product||""].map(esc).join(",")));
+  rows.forEach((a,i)=>lines.push([i+1,a.plc,a.raised,TD(a.content),a.code,a.resolved||"(chưa giải quyết)",alarmDuration(a.raised,a.resolved),a.product||""].map(esc).join(",")));
   const blob = new Blob(["﻿"+lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
   const x = document.createElement("a"); x.href = URL.createObjectURL(blob); x.download = "alarm_history_export.csv";
   document.body.appendChild(x); x.click(); x.remove(); URL.revokeObjectURL(x.href);

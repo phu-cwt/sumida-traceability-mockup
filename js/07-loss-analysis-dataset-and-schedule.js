@@ -84,6 +84,9 @@ function hm(mins){ mins=Math.round(mins); if(mins<60) return mins+'m';
    <60 nên giá trị nhỏ vẫn hiện dạng phút. */
 function dur(mins){ return hm(mins); }
 function T(k){ return (I18N[currentLang]&&I18N[currentLang][k]) || I18N.vi[k] || k; }
+/* Câu có chỗ chèn số/mã: dịch TRỌN câu rồi thay {0},{1}… — nối chuỗi theo thứ tự tiếng
+   Việt sẽ ra câu sai ngữ pháp ở tiếng Nhật/Trung vì trật tự từ khác hẳn. */
+function TF(k, ...v){ return T(k).replace(/\{(\d+)\}/g, (_,i)=> v[i] ?? ''); }
 function jit(a,b){ const x=Math.sin(a*12.9898+b*78.233)*43758.5453; return x-Math.floor(x); }
 
 /* ══════════ LỊCH VẬN HÀNH LINE (cả line chạy chung ca — cấu hình ở Settings) ══════════ */
