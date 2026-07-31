@@ -1,0 +1,170 @@
+/* Bang lich su, sub-nav, settings card, timeline trace, thu vien anh NG, modal, login, FAB
+   Tach tu Sumida_Traceability_Mock_UI.html — KHONG sua thu tu nap file,
+   cascade CSS / thu tu khai bao JS phu thuoc vao no. */
+  /* ===== HISTORY ===== */
+  .filter-row{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;margin-bottom:10px;align-items:end}
+  .filter-row label{display:flex;flex-direction:column;font-size:12px;color:#333;gap:3px}
+  .filter-row input,.filter-row select{padding:6px 8px;border:1px solid #111;font-size:13px;background:#fff;border-radius:14px}
+  .btn{background:#1F1F1F;color:#fff;border:none;padding:8px 22px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px}
+  .btn:hover{background:#3a3a3a}
+  .btn.danger{background:var(--pink);color:#fff}
+  .btn.danger:hover{background:#d97380}
+  .history-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #111}
+  .history-table th{background:#CFCFCF;color:#111;padding:8px;font-size:12px;border:1px solid #9a9a9a;text-align:center;font-weight:700;position:sticky;top:0;z-index:2}
+  .history-table th:first-child{background:#1E88E5;color:#fff}
+  .history-table td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:12px}
+  .row-ng{background:#F4A6AB}
+  .history-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+  .legend{display:flex;gap:18px;font-size:12px;align-items:flex-end}
+  .legend>span{display:inline-flex;align-items:flex-end;gap:4px;line-height:1}
+  .legend .sw{width:14px;height:14px;display:inline-block;border:1px solid #444}
+  .legend .ok{background:#7CD986}.legend .ng{background:#F4A6AB}
+
+  /* ===== SUB-NAV (Production History | Settings | Back | Logout — giống 25T01) ===== */
+  .subnav{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:14px;padding:12px 18px 0}
+  .snav{background:#fff;border:1px solid #bdbdbd;border-radius:3px;padding:11px 23px;font-size:14px;font-weight:700;color:#222;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .snav:hover{background:#f2f2f2}
+  .snav.active{background:#D9D9D9;color:#888;cursor:default;box-shadow:none;pointer-events:none}
+  .snav .badge{background:#8C8C8C;color:#fff;font-size:10px;padding:1px 5px;border-radius:8px;font-weight:700}
+  .snav.danger{background:#C8606A;color:#fff;border:2px solid #fff;padding:10px 22px}
+  .snav.danger:hover{background:#b8545e}
+
+  /* ===== SETTINGS PAGE (Shift schedule + CSV dir — giống 25T01 tab Settings) ===== */
+  .settings-card{background:#fff;border:1px solid #111;padding:0;margin-bottom:14px}
+  .settings-card h3{margin:0;background:#1F1F1F;color:#fff;padding:9px 14px;font-size:13px;letter-spacing:.5px}
+  .settings-card .bd{padding:16px}
+  .shift-row{display:grid;grid-template-columns:90px 1fr 1fr 90px;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid #eee}
+  .shift-row .sname{font-weight:700}
+  .shift-row label{font-size:12px;color:#555;display:flex;flex-direction:column;gap:3px}
+  .shift-row input[type=text]{padding:6px 8px;border:1px solid #999;border-radius:4px;font-family:Consolas,monospace}
+
+  /* ===== TRACE TIMELINE ===== */
+  .trace-bar{background:#fff;border:1px solid #111;padding:14px;margin-bottom:14px}
+  .trace-bar .row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+  .trace-bar label{display:flex;flex-direction:column;font-size:12px;gap:3px}
+  /* Nhãn PHẢI nằm trong .cap: label là flex column, mọi text node trần trong nó
+     thành một flex item riêng ⇒ dấu ":" tách khỏi chữ, rơi xuống dòng thứ ba và
+     đẩy lệch chiều cao label so với các label bên cạnh (align-items:end). */
+  .trace-bar label>.cap{color:#555;white-space:nowrap}
+  .trace-bar input,.trace-bar select{border:1px solid #111;font-size:14px;border-radius:14px;background:#fff}
+  .trace-bar input{padding:8px;font-family:Consolas,monospace;min-width:240px}
+  /* select là widget gốc của trình duyệt: bỏ qua line-height, cao hơn input 4px ở
+     cùng padding ⇒ bù bằng padding dọc 6px để hai ô cao bằng nhau (35px). */
+  .trace-bar select{padding:6px 8px;font-family:inherit}
+  .trace-summary{background:#fff;border:1px solid #111;padding:10px;margin-bottom:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .trace-summary div .lbl{font-size:11px;color:#666;text-transform:uppercase}
+  .trace-summary div .val{font-size:14px;font-weight:700;font-family:Consolas,monospace}
+  .timeline{position:relative;padding:20px 8px 8px;background:#fff;border:1px solid #111;overflow-x:auto}
+  .timeline .track{position:relative;display:flex;gap:6px;min-width:2300px}
+  .timeline .step{flex:1;min-width:150px;border:1px solid #111;background:#fafafa;padding:8px;font-size:11px;position:relative}
+  .timeline .step.ok{background:#D6F0D8;border-color:#1E8A2E}
+  .timeline .step.ng{background:#F8CDD0;border-color:#C9272F}
+  .timeline .step .no{font-weight:800;font-size:13px}
+  .timeline .step .nm{font-size:10px;color:#444;min-height:22px;line-height:1.15}
+  .timeline .step .res{margin-top:4px;font-weight:700;font-size:11px;display:flex;justify-content:space-between;align-items:center}
+  .timeline .step .res .tag{padding:1px 5px;color:#fff;font-size:10px;border-radius:2px}
+  .timeline .step .res .tag.ok{background:#1E8A2E}
+  .timeline .step .res .tag.ng{background:#C9272F}
+  .timeline .step .thumb{margin-top:4px;height:42px;background:linear-gradient(45deg,#888 25%,#aaa 25% 50%,#888 50% 75%,#aaa 75%);background-size:8px 8px;border:1px solid #555;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;cursor:pointer}
+  .timeline .step .data{margin-top:4px;font-size:10px;color:#333;border-top:1px dashed #888;padding-top:3px;line-height:1.3}
+  .timeline .step .data b{color:#111}
+
+  /* ===== NG GALLERY ===== */
+  .gallery-filters{background:#fff;border:1px solid #111;padding:12px;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+  .gallery-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .ng-card{background:#fff;border:1px solid #111;cursor:pointer;overflow:hidden;transition:transform .12s}
+  .ng-card:hover{transform:translateY(-2px);box-shadow:2px 2px 0 #111}
+  .ng-card .img{height:130px;background-color:#bbb;background-image:linear-gradient(135deg,#888 25%,#bbb 25% 50%,#888 50% 75%,#bbb 75%);background-size:14px 14px;position:relative;display:flex;align-items:center;justify-content:center}
+  .ng-card .img .defect{position:absolute;width:30%;height:30%;border:3px dashed #FFD93D;border-radius:50%;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.1);opacity:.6}}
+  .ng-card .info{padding:8px 10px;font-size:11px}
+  .ng-card .info .case{font-family:Consolas,monospace;font-weight:700;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ng-card .info .meta{color:#666;margin-top:2px;font-size:10px}
+  .ng-card .info .badge{display:inline-block;background:#1F1F1F;color:#fff;padding:1px 5px;font-size:10px;margin-top:4px}
+
+  /* Storage stats banner */
+  .storage-banner{background:#fff;border:1px solid #111;padding:10px 14px;margin-bottom:10px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:12px}
+  .storage-banner b{font-weight:800;color:#111}
+  .storage-banner .total{font-weight:800;font-size:13px;color:#111;margin-right:6px}
+
+  /* Pagination footer */
+  .pag-bar{display:flex;justify-content:space-between;align-items:center;margin-top:12px;background:#fff;border:1px solid #111;padding:10px 14px;font-size:12px}
+  .pag-bar .count{color:#333}
+  .pag-bar .count b{color:#111}
+  .pag-bar .ctrls{display:flex;gap:6px;align-items:center}
+  .pag-bar .ctrls button{background:#1F1F1F;color:#fff;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-weight:600;font-size:12px}
+  .pag-bar .ctrls button:disabled{background:#bbb;cursor:not-allowed}
+  .pag-bar .ctrls .pageinfo{padding:0 8px;font-weight:700}
+
+  /* Disabled Search */
+  .btn:disabled{background:#bbb !important;cursor:not-allowed;opacity:.7}
+
+  /* Skeleton shimmer */
+  .ng-skel{background:#fff;border:1px solid #ddd;overflow:hidden}
+  .ng-skel .img,.ng-skel .info-bar{background:linear-gradient(90deg,#eee 25%,#f6f6f6 50%,#eee 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+  .ng-skel .img{height:130px}
+  .ng-skel .info-bar{height:14px;margin:8px 10px;border-radius:2px}
+  .ng-skel .info-bar.small{width:60%;height:10px;margin-top:6px}
+  @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  /* ===== POPUP ===== */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal-backdrop.show{display:flex}
+  .modal{background:#fff;border:2px solid #111;min-width:380px;max-width:90vw;max-height:90vh;overflow:auto}
+  .modal .hd{display:flex;justify-content:space-between;align-items:center;background:#1F1F1F;color:#fff;padding:8px 12px;font-weight:700}
+  .modal .hd .x{cursor:pointer;color:#fff;font-size:18px}
+  .modal .bd{padding:14px}
+  /* ===== LOGIN ===== */
+  .login-card{background:#fff;width:300px;border-radius:0;border:none;padding:28px 28px 52px;box-shadow:0 4px 24px rgba(0,0,0,.15);position:relative}
+  .login-card .lc-close{position:absolute;top:14px;right:16px;cursor:pointer;color:#E63946;font-size:22px;font-weight:900;line-height:1;background:none;border:none;padding:0}
+  .login-card .lc-close:hover{opacity:.7}
+  .login-card .lc-logo{text-align:center;margin-top:24px;margin-bottom:14px}
+  .login-card .lc-logo img{height:30px;width:auto}
+  .login-card .lc-title{text-align:center;font-size:18px;font-weight:700;color:#333;margin:0 0 28px}
+  .login-card .lc-field{display:flex;align-items:center;gap:12px;border-bottom:1.5px solid #ccc;padding:10px 0;margin-bottom:22px}
+  .login-card .lc-field svg{flex-shrink:0;color:#333}
+  .login-card .lc-field input{flex:1;border:none;outline:none;font-size:14px;color:#333;background:transparent}
+  .login-card .lc-field input::placeholder{color:#aaa}
+  .login-card .lc-btn{width:100%;padding:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;font-size:15px;font-weight:700;color:#222;cursor:pointer;margin-top:10px;transition:background .15s}
+  .login-card .lc-btn:hover{background:#f0f0f0}
+  .login-card .lc-error{display:none;color:#C9272F;font-size:12px;text-align:center;margin:-10px 0 14px;font-weight:600}
+  .login-card .lc-error.show{display:block}
+  .login-card .lc-hint{text-align:center;font-size:11px;color:#999;margin-top:14px}
+  .login-card .lc-hint b{color:#666}
+
+  /* ===== AUTH (login gate) ===== */
+  /* Dashboard (Overview) mở tự do; các tab nâng cao chỉ hiện sau khi đăng nhập (giống 25T01) */
+  body:not(.authed) .tab[data-tab="history"],
+  body:not(.authed) .tab[data-tab="trace"],
+  body:not(.authed) .tab[data-tab="gallery"]{display:none !important}
+
+  /* ===== UTIL ===== */
+  /* ===== SYS TAGS (PLC / CAM / DB / NAS) ===== */
+  .sys-tags{display:flex;align-items:center;gap:14px;margin:0 10px}
+  .sys-tag{font-size:16px;font-weight:900;letter-spacing:.5px;line-height:1;cursor:pointer;user-select:none;transition:opacity .15s}
+  .sys-tag:hover{opacity:.7}
+  .sys-tag.opc{color:#2ECC40}
+  .sys-tag.db {color:#2ECC40}
+  .sys-tag.nas{color:#2ECC40}
+  .sys-tag.mac{color:#2ECC40}
+  .sys-tag.offline{color:#9aa0a6 !important}
+
+  .grow{flex:1}
+  .center{text-align:center}
+  .small{font-size:11px;color:#666}
+  .pill{display:inline-block;padding:2px 8px;font-size:11px;font-weight:700;border-radius:10px;color:#fff}
+  .pill.ok{background:#1E8A2E}
+  .pill.ng{background:#C9272F}
+  .pill.adj{background:#B8860B}
+  .pill.stop{background:#888}
+
+  /* ===== FAB ĐỀ XUẤT + panel ===== */
+  .fab{position:fixed;right:24px;bottom:42px;z-index:40;display:inline-flex;align-items:center;gap:8px;background:#B8860B;color:#fff;border:none;border-radius:24px;padding:12px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.28)}
+  .fab:hover{background:#a4780a}
+  .sg-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+  .sg-table th{background:#1F1F1F;color:#fff;text-align:left;padding:6px 8px;font-size:12px}
+  .sg-table td{border:1px solid #ddd;padding:6px 8px;vertical-align:top}
+  .sg-table code{background:#F0F0F0;border:1px solid #ccc;border-radius:3px;padding:1px 5px;font-family:Consolas,monospace;font-size:11px;color:#1b1b1b}
+  .sg-have{font-size:12px;color:#1E8A2E;background:#EAFBEA;border:1px solid #A7E6A2;padding:6px 9px;margin-bottom:10px}
+  .sg-pending{font-size:12px;color:#7a5800;background:#FFF8E1;border:1px solid #B8860B;padding:6px 9px;margin-top:12px}
+  .sg-nodep{font-size:12px;color:#10406e;background:#E8EEF6;border:1px solid #9bb6d6;padding:6px 9px;margin-top:10px}

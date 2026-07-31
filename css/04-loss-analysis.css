@@ -1,0 +1,267 @@
+/* Khoi gop tu wireframe loss-analysis: tab con, bar 5 trang thai, donut, heatmap, timeline, the trace
+   Tach tu Sumida_Traceability_Mock_UI.html — KHONG sua thu tu nap file,
+   cascade CSS / thu tu khai bao JS phu thuoc vao no. */
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     GỘP TỪ mes-loss-analysis-wireframe.html
+     Class nào TRÙNG TÊN với mockup gốc thì đổi tiền tố `la-` (loss analysis):
+       .kpi-bar/.kpi → .la-kpi-bar/.la-kpi · .page-title/.page-sub → .la-title/.la-sub
+       .tag → .la-tag · .btn/.shift-row/.settings-foot/.statusbar/.page dùng lại bản gốc.
+     Toàn bộ vẽ bằng CSS/div (không canvas) — map 1-1 sang WPF Grid/ColumnDefinition.
+     ══════════════════════════════════════════════════════════════════════════ */
+
+  /* ----- Dropdown 4 ngôn ngữ (mở rộng nút world.png sẵn có) ----- */
+  .langmenu{position:absolute;top:40px;right:0;z-index:60;background:#fff;border:1px solid #888;
+    box-shadow:0 4px 14px rgba(0,0,0,.22);display:none;min-width:158px}
+  .langmenu.show{display:block}
+  .langmenu button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:#fff;border:none;
+    padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;color:#222;border-bottom:1px solid #eee}
+  .langmenu button:last-child{border-bottom:none}
+  /* Cờ SVG tỉ lệ 4:3 (viewBox 640x480) — viền xám để cờ nền trắng (JP) không chìm vào menu */
+  .lang-flag{width:20px;height:15px;flex-shrink:0;object-fit:cover;border:1px solid #bbb;display:block}
+  .langmenu button:hover{background:#E8F0FE}
+  .langmenu button.active{background:#1E88E5;color:#fff}
+
+  /* ----- TAB CON (dùng ở Status / Production History / Settings) ----- */
+  /* Dính lại khi màn phải cuộn: cuộn mất thanh tab thì không biết đang ở tab nào,
+     cũng không đổi tab được nếu không cuộn ngược lên. */
+  .subtabs{display:flex;background:#CFCFCF;border:1px solid #9a9a9a;border-bottom:none;margin-bottom:0;
+    flex-shrink:0;position:sticky;top:0;z-index:25}
+  .subtab{padding:6px 16px;font-weight:700;font-size:13px;cursor:pointer;color:#333;border-right:1px solid #aaa;display:flex;align-items:center;gap:7px;background:#CFCFCF;border:none;font-family:inherit}
+  .subtab:hover{background:#DCDCDC}
+  .subtab.active{background:#fff;color:#111;box-shadow:inset 0 3px 0 var(--blue)}
+  .subtab .jp{font-size:11px;color:#777;font-weight:400}
+  .subtab.active .jp{color:#555}
+  /* MỘT NGÔN NGỮ TRÊN MÀN: `.jp` là bản dịch phụ tiếng Nhật nên ẩn ở MỌI chế độ —
+     khi chọn 日本語 thì nhãn chính đã là tiếng Nhật rồi (nếu hiện sẽ lặp 2 lần).
+     Giữ lại trong source để đối chiếu nguyên văn thuật ngữ của khách.
+     Số mục tài liệu khách (1-1-1, 1-4-2…) dùng `.specref` — hiện luôn, không phụ thuộc ngôn ngữ. */
+  .jp{display:none}
+  .specref{font-size:11px;color:#8a8a8a;font-weight:400;white-space:nowrap}
+  .card h3 .specref{color:#9a9a9a}
+  .subpanel{display:none;border:1px solid #9a9a9a;background:var(--bg);padding:11px}
+  .subpanel.active{display:block}
+
+  /* ----- Bộ chọn kỳ / phạm vi ----- */
+  .period{display:inline-flex;border:1px solid #111;border-radius:6px;overflow:hidden;vertical-align:middle}
+  .period button{border:none;background:#fff;padding:6px 15px;font-size:13px;font-weight:600;cursor:pointer;border-right:1px solid #ccc;font-family:inherit}
+  .period button:last-child{border-right:none}
+  .period button.active{background:var(--blue);color:#fff}
+  .toolbar{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+  .toolbar label{display:flex;flex-direction:column;font-size:12px;color:#444;gap:3px}
+  .toolbar select,.toolbar input{padding:6px 10px;border:1px solid #111;border-radius:14px;font-size:13px;background:#fff;font-family:inherit}
+  .dstep{background:#1F1F1F;color:#fff;border:none;width:26px;height:26px;border-radius:6px;cursor:pointer;font-weight:800}
+  .dstep:hover{background:#3a3a3a}
+  .ctx-sel{padding:4px 8px;border:1px solid #111;border-radius:6px;font-size:13px;background:#fff;font-family:inherit}
+  .ctx-date{padding:4px 8px;border:1px solid #111;border-radius:6px;font-size:13px;font-weight:700;background:#fff;font-family:Consolas,monospace;cursor:pointer;color:#111}
+  .ctxbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .ctxbar .ctx{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+
+  /* ----- KPI (bản wireframe: có nhãn tiếng Nhật phụ) ----- */
+  .la-kpi-bar{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;background:#fff;border:2px solid #1B1B1B;padding:11px}
+  .la-kpi{border:1px solid #1B1B1B;border-radius:4px;padding:9px 11px;display:flex;flex-direction:column;gap:1px;min-width:0}
+  .la-kpi .lbl{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .la-kpi .jp{font-size:10px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .la-kpi .val{font-size:21px;font-weight:800;line-height:1.15}
+  .la-kpi.ok .val{color:#1E8A2E}.la-kpi.ng .val{color:#C9272F}
+  .la-kpi.blue .val{color:#1565C0}.la-kpi.warn .val{color:#B8860B}
+  /* OEE là chỉ số tổng — nổi bằng CỠ CHỮ + viền đậm, không đổi nền (nền đen lạc lõng
+     giữa dải KPI trắng, và chữ trên nền đen khó đọc khi bôi chọn). */
+  .la-kpi.oee{border-width:2px}
+  .la-kpi.oee .val{color:#1F1F1F;font-size:27px}
+  .kpi-chip{margin-top:3px}   /* chip đứng dòng riêng — nhét trong .lbl thì bị cắt vì nowrap */
+
+  /* ----- CARD / tiêu đề khối ----- */
+  .card{background:#fff;border:1px solid #111;margin-bottom:14px}
+  .card h3{margin:0;background:#1F1F1F;color:#fff;padding:9px 14px;font-size:13px;letter-spacing:.4px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .card h3 .jp{font-size:11px;color:#bbb;font-weight:400}
+  .card .bd{padding:11px 14px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .grid3{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+  .la-title{font-size:18px;font-weight:800;margin:0 0 3px}
+  .la-sub{font-size:12px;color:var(--muted);margin:0 0 12px}
+  .la-tag{font-family:Consolas,monospace;font-size:11px;background:#F0F0F0;border:1px solid #ccc;border-radius:3px;padding:1px 5px}
+  .note{font-size:11px;color:#8a8a8a;font-style:italic;margin-top:8px;display:flex;gap:6px;line-height:1.45}
+  .note b{color:#6a6a6a;font-style:normal}
+
+  /* ----- Chip "tuỳ chọn" / "cần xác nhận" (đánh dấu chi phí triển khai WPF) ----- */
+  .optchip,.cfmchip{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;
+    padding:1px 7px;border-radius:9px;letter-spacing:.3px;white-space:nowrap;flex-shrink:0;font-style:normal}
+  .optchip{background:#E8EEF6;color:#10406e;border:1px solid #9bb6d6}
+  .cfmchip{background:#FFF8E1;color:#7a5800;border:1px solid #B8860B}
+
+  /* ----- THANH BAR 5 TRẠNG THÁI + 2 DẤU NGOẶC (màn Phân tích tổn thất) -----
+     div flex + width % thay cho canvas: khớp được bố cục 2 dấu ngoặc và
+     map 1-1 sang WPF `Grid` + `ColumnDefinition Width="*"`. */
+  .lb-wrap{padding:6px 2px 4px}
+  .lb-bar{display:flex;height:44px;border:1px solid #777;overflow:hidden;background:#eee}
+  .lb-seg{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    overflow:hidden;white-space:nowrap;font-family:Consolas,"SF Mono",monospace;cursor:default;min-width:0}
+  .lb-seg b{font-size:12px;font-weight:800;line-height:1.1}
+  .lb-seg i{font-size:10px;font-style:normal;opacity:.85;line-height:1.1}
+  .lb-seg:hover{outline:2px solid #111;outline-offset:-2px}
+  .lb-bk{position:relative;height:9px;border:2px solid #444;border-bottom:none;margin-top:3px}
+  .lb-bk>span{position:absolute;top:9px;left:50%;transform:translateX(-50%);white-space:nowrap;
+    font-size:11px;font-weight:700;color:#333;background:var(--bg);padding:0 6px}
+  .lb-bkrow{height:30px}
+  .lb-bk.plan{border-color:#777}
+  .lb-bk.plan>span{color:#666;font-weight:600}
+  .lb-denom{margin-top:6px;background:#FFF8E1;border:1px solid #B8860B;color:#7a5800;
+    padding:7px 11px;font-size:11.5px;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+  .lb-denom b{color:#5e4400}
+
+  /* ----- Time-state per equipment (thanh tỷ lệ gộp) ----- */
+  .ts-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;margin:2px 0 8px}
+  .ts-legend span{display:inline-flex;align-items:center;gap:5px}
+  .ts-legend .sw{width:14px;height:14px;border:1px solid #666;display:inline-block;flex-shrink:0}
+  .ts-row{display:grid;grid-template-columns:150px 1fr 58px;align-items:center;gap:10px;margin-bottom:6px;font-size:12px;cursor:pointer}
+  .ts-row:hover .name{color:#1565C0}
+  .ts-row .name{font-weight:700;line-height:1.15}
+  .ts-row .name small{font-weight:400;color:#999;display:block;font-family:Consolas,monospace}
+  .ts-bar{height:24px;display:flex;border:1px solid #999;overflow:hidden;background:#eee}
+  .ts-bar .seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+    overflow:hidden;white-space:nowrap;cursor:pointer;font-family:Consolas,"SF Mono",monospace;padding:0 2px}
+  .ts-bar .seg:hover{outline:2px solid #111;outline-offset:-2px}
+  .ts-row .oee{text-align:right;font-weight:800}
+
+  /* ----- Tooltip tự vẽ (tin cậy hơn title mặc định) ----- */
+  #ts-tip{position:fixed;z-index:100;background:#1F1F1F;color:#fff;font-size:12px;padding:6px 10px;border-radius:5px;
+    pointer-events:none;display:none;white-space:nowrap;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+  #ts-tip .tt-time{font-weight:800;font-family:Consolas,monospace}
+  #ts-tip .tt-sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  /* ----- Donut cơ cấu thời gian (pure CSS conic — ⓘ tuỳ chọn với WPF) ----- */
+  .donut-wrap{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap}
+  .donut{width:140px;height:140px;border-radius:50%;position:relative;flex-shrink:0}
+  .donut::after{content:"";position:absolute;inset:24px;background:#fff;border-radius:50%}
+  .donut .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1}
+  .donut .center .big{font-size:26px;font-weight:900;color:#1565C0}
+  .donut .center .cap{font-size:10px;color:#666}
+  .dlegend{font-size:12px}
+  .dlegend div{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+  .dlegend .sw{width:12px;height:12px;border:1px solid #666;flex-shrink:0}
+
+  /* ----- Bảng dữ liệu kiểu wireframe ----- */
+  table.tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid #111}
+  table.tbl th{background:#CFCFCF;padding:7px 8px;font-size:11px;border:1px solid #9a9a9a;font-weight:700;position:sticky;top:0;z-index:2}
+  table.tbl th.k{background:var(--blue);color:#fff}
+  table.tbl td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:12px}
+  table.tbl td.l{text-align:left}
+  table.tbl td .mono{font-family:Consolas,monospace;color:#666;font-size:11px}
+  .v-ok{color:#1E8A2E;font-weight:800}.v-ng{color:#C9272F;font-weight:800}
+  .row-under td{background:#FFF3D6}
+  .tblwrap{max-height:360px;overflow:auto;border:1px solid #111}
+  .tblwrap table.tbl{border:none}
+
+  /* ----- Thanh tiến độ thực/mục tiêu ----- */
+  .prog{height:20px;background:#eee;border:1px solid #999;position:relative;overflow:hidden;border-radius:3px}
+  .prog .fill{height:100%;background:linear-gradient(90deg,#39A6D6,#1565C0)}
+  .prog .txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#111}
+
+  /* ----- Bar chart sản lượng theo kỳ ----- */
+  .barchart{display:flex;align-items:flex-end;gap:12px;height:180px;padding:0 6px;border-bottom:1px solid #999;border-left:1px solid #999}
+  .barchart .grp{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end;cursor:pointer;min-width:0}
+  .barchart .grp:hover .bar{filter:brightness(1.08);outline:1px solid rgba(0,0,0,.25)}
+  .barchart .bars{display:flex;align-items:flex-end;gap:3px;height:100%}
+  .barchart .bar{width:22px}   /* khung hẹp lại một nửa nên cột dày lên cho cân */
+  .barchart .bar.ok{background:var(--ok)}.barchart .bar.ng{background:var(--ng)}
+  .barchart .xlab{font-size:10px;color:#555;margin-top:3px;text-align:center;line-height:1.15}
+
+  /* ----- Pareto tổn thất (ⓘ tuỳ chọn với WPF) ----- */
+  .par-row{display:grid;grid-template-columns:150px 1fr 108px;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+  .par-row .plbl{font-weight:700}
+  .par-bar{height:18px;background:#f0f0f0;border:1px solid #ccc}
+  .par-bar .fill{height:100%}
+  .par-row .pval{text-align:right;font-family:Consolas,monospace;font-weight:700;color:#333}
+
+  /* ----- Xu hướng (ⓘ tuỳ chọn với WPF) ----- */
+  .trend{display:flex;align-items:flex-end;gap:8px;height:250px;border-bottom:1px solid #999;border-left:1px solid #999;padding:4px 4px 0}
+  .trend .tg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;min-width:0}
+  .trend .tb{width:62%;border-radius:2px 2px 0 0;min-height:2px}
+  .trend .tx{font-size:9px;color:#555;text-align:center;line-height:1.15}
+
+  /* ----- Heatmap OEE máy × kỳ (WPF: Grid ô màu — bắt buộc) ----- */
+  .heat{border-collapse:collapse}
+  .heat th,.heat td{border:1px solid #ddd;font-size:10px;text-align:center;padding:3px}
+  .heat th{background:#eee;font-weight:700}
+  .heat td.hm{color:#fff;font-weight:800;min-width:34px;cursor:default}
+  .heat td.plc{text-align:left;white-space:nowrap;padding:3px 8px;font-size:10px;font-family:Consolas,monospace}
+  .heat td.off{background:#E0E0E0;color:#999;font-weight:400}
+
+  /* ----- Modal drill-down 1 máy ----- */
+  .mdl-bd{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:200}
+  .mdl-bd.show{display:flex}
+  .mdl{background:#fff;border:1px solid #111;width:660px;max-width:94vw;max-height:90vh;overflow:auto;border-radius:6px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  .mdl h3{margin:0;background:#1F3864;color:#fff;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+  .mdl h3 .x{cursor:pointer;font-size:18px}
+  .mdl .mbd{padding:16px}
+
+  /* ----- Timeline realtime theo giờ ----- */
+  .live-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2ECC40;margin-right:7px;
+    box-shadow:0 0 0 3px rgba(46,204,64,.25);animation:live-pulse 2s ease-in-out infinite}
+  @keyframes live-pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .tl-ruler-row{display:grid;grid-template-columns:150px 1fr;gap:10px;margin-bottom:4px}
+  .tl-ruler{position:relative;height:16px}
+  .tl-tick{position:absolute;top:0;transform:translateX(-50%);font-size:10px;color:#777;font-family:Consolas,monospace;white-space:nowrap}
+  .tl-tick.start{transform:translateX(0)}      /* mốc đầu/cuối kéo vào trong khung */
+  .tl-tick.end{transform:translateX(-100%)}
+  .tl-row{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;margin-bottom:2px;font-size:12px}
+  .tl-name{font-weight:700;line-height:1.15}
+  .tl-name small{font-weight:400;color:#999;display:block;font-family:Consolas,monospace}
+  .tl-track{position:relative;height:21px;border:1px solid #999;background:#f4f4f4;overflow:hidden}
+  .tl-seg{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+    overflow:hidden;white-space:nowrap;cursor:pointer;font-family:Consolas,"SF Mono",monospace}
+  .tl-seg:hover{outline:2px solid #111;outline-offset:-2px;z-index:3}
+  .tl-off{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;color:#999;font-weight:700;font-size:10px;
+    background:repeating-linear-gradient(45deg,#EDEDED 0,#EDEDED 6px,#E2E2E2 6px,#E2E2E2 12px)}
+  /* Máy không hoạt động (bị tắt giữa ca) — trạng thái ĐÃ ĐO được, nằm TRƯỚC vạch NOW.
+     Phải đậm hơn hẳn .tl-future: hai ô cùng xám nhưng khác nghĩa hoàn toàn. */
+  .tl-idle{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;
+    font-size:10px;font-family:Consolas,"SF Mono",monospace;background:var(--st-idle);cursor:pointer}
+  /* Sau vạch NOW — thời gian chưa xảy ra. Xám nhạt, chữ nghiêng để không bị đọc thành
+     một trạng thái máy đã đo được. */
+  .tl-future{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;color:#8a8a8a;font-weight:600;
+    font-size:10px;font-style:italic;background:var(--st-future);border-left:1px dashed #999}
+  .tl-shiftmark{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed #999;z-index:2}
+  .tl-now{position:absolute;top:0;bottom:0;width:2px;background:var(--blue);z-index:4}
+  .tl-now::after{content:'NOW';position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;
+    color:#fff;background:var(--blue);padding:0 3px;border-radius:2px}
+
+  /* ----- Timeline ở Top Page: GIÃN KÍN KHUNG -----
+     14 dòng chia đều chiều cao còn lại: màn to → dòng cao hơn, đọc được từ xa
+     (màn hình xưởng nhìn từ vài mét); màn thấp → co lại tới min-height, vẫn không scroll.
+     Cần chuỗi flex liên tục từ .page.active xuống #rt-timeline, kèm min-height:0
+     ở mỗi cấp — thiếu 1 cấp là flex item không co được và sinh scroll. */
+  /* Bảng sản lượng dùng CÙNG chuỗi flex này để 2 tab của Top Page cao bằng nhau */
+  #tab-ov-prod.active,
+  #tab-hist-output.active,
+  #tab-ov-rt.active,
+  #tab-ov-rt > #strip-rt,
+  #tab-ov-rt > #strip-rt > div{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+  /* Vùng biểu đồ có khung riêng: tách hẳn khỏi chú giải phía trên và ghi chú phía dưới,
+     nếu không nó chạy sát mép .ov-frame và không đọc ra là một hộp biểu đồ. */
+  #rt-timeline{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;gap:3px;
+    border:1px solid #1B1B1B;background:#fff;padding:8px 10px}
+  #rt-timeline .tl-ruler-row{flex:0 0 auto}
+  /* max-height: màn rất lớn (2K+) thì dừng ở 54px cho khỏi thành bar quá dày,
+     phần thừa dồn xuống đáy — vẫn dễ đọc mà không méo tỷ lệ. */
+  #rt-timeline .tl-row{flex:1 1 0;min-height:20px;max-height:54px;margin-bottom:0;align-items:stretch}
+  #rt-timeline .tl-track{height:auto}
+  #rt-timeline .tl-name{display:flex;flex-direction:column;justify-content:center;font-size:13px}
+  #rt-timeline .tl-name small{font-size:10.5px}
+  #rt-timeline .tl-seg,#rt-timeline .tl-off,#rt-timeline .tl-idle,#rt-timeline .tl-future{font-size:11.5px}
+  #tab-ov-rt .ctxbar,#tab-ov-rt #rt-sub,#tab-ov-rt .ts-legend,#tab-ov-rt .note{flex:0 0 auto}
+
+  /* ===== SERIAL TRACE — thẻ công đoạn 3 trạng thái ===== */
+  .tr-meta{background:#fff;border:1px solid #111;padding:10px;margin-bottom:12px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .tr-meta .lbl{font-size:11px;color:#666;text-transform:uppercase}
+  .tr-meta .val{font-size:13px;font-weight:700;font-family:Consolas,monospace;word-break:break-all}
+  .timeline .step.nocode{background:#E4E4E4;border-color:#9a9a9a;color:#555}
+  .timeline .step.nodata{background:#FAFAFA;border-color:#C8C8C8;color:#9a9a9a}
+  .timeline .step .plcref{font-size:9px;color:#888;font-family:Consolas,monospace}
+  .timeline .step .qrow{display:flex;justify-content:space-between;gap:5px;font-size:9.5px;line-height:1.35;border-bottom:1px dotted #c9c9c9;padding:1px 0}
+  .timeline .step .qrow:last-child{border-bottom:none}
+  .timeline .step .qrow span:first-child{color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .timeline .step .qrow span:last-child{font-family:Consolas,monospace;font-weight:700;color:#111;flex-shrink:0}
+  .timeline .step .qrow.warn span:last-child{color:#B8860B}
+  .timeline .step .track{min-width:0}

@@ -1,0 +1,44 @@
+/* Panel thap (<=820px) cho dashboard khong scroll + CSS in bao cao PDF
+   Tach tu Sumida_Traceability_Mock_UI.html — KHONG sua thu tu nap file,
+   cascade CSS / thu tu khai bao JS phu thuoc vao no. */
+  /* ===== PANEL THẤP (≤820px) — dashboard phải vừa 1 khung, KHÔNG scroll =====
+     Màn hình xưởng thường là 1366×768. Thu gọn nhịp dọc ở đúng ngưỡng đó thay vì
+     làm nhỏ chữ ở mọi độ phân giải (màn to vẫn giữ số liệu lớn, dễ đọc từ xa). */
+  @media (max-height:820px){
+    .page{padding:8px 12px}
+    .title-row{margin-bottom:3px}
+    .page-title{font-size:17px;margin:0 0 5px}
+    .kpi-bar{padding:6px;gap:7px;margin-bottom:7px}
+    .kpi{padding:6px 12px}
+    .kpi .lbl{font-size:11px}
+    .kpi .val{font-size:23px}
+    .subpanel{padding:6px}
+    .subtab{padding:5px 14px}
+    /* Màn 1366×768: bóp nhịp dọc của bảng để 14 dòng + chú thích vẫn đủ chỗ
+       sau khi đã chừa đáy cho nút nổi Đề xuất */
+    .ov-prod table.tbl td{padding:2px 6px;font-size:13px}
+    .ov-prod table.tbl td.l{font-size:13px}
+    .ov-prod table.tbl th{padding:5px 6px;font-size:12px}
+    .ov-foot{padding:3px 9px;font-size:11px}
+    .tl-row{margin-bottom:0}
+    .tl-track{height:17px}
+    .tl-name{font-size:11px}
+    .tl-ruler{height:14px}
+    .ts-legend{font-size:11px;margin:2px 0 5px}
+    #tab-ov-rt .ts-legend{margin:0 0 2px}
+    #tab-ov-rt .note{font-size:10px;margin-top:1px;line-height:1.3}
+  }
+
+  /* ===== IN PDF (màn Serial Trace) ===== */
+  @media print{
+    .topbar,.subnav,.statusbar,.fab,.subtabs,.trace-bar,.modal-backdrop,.mdl-bd{display:none !important}
+    html,body,.app{height:auto;overflow:visible;background:#fff}
+    .page{display:none !important}
+    .page.active{display:block !important;overflow:visible;padding:0}
+    .timeline{overflow:visible;border:none}
+    .timeline .track{min-width:0;flex-wrap:wrap;gap:4px}
+    .timeline .step{flex:0 0 calc(25% - 4px);page-break-inside:avoid}
+    .tr-meta{grid-template-columns:repeat(3,1fr)}
+    .print-only{display:block !important}
+  }
+  .print-only{display:none}
