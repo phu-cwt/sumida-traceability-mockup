@@ -6,7 +6,7 @@ const _lc = lastCompletedRunningShift();
 let lossPeriod='shift', lossDate=_lc.date, lossShift=_lc.shift, lossWeekOff=0, lossMonthOff=5;
 
 function fillScopeSelects(){
-  const opts = `<option value="all">Toàn line (14 PLC)</option>` +
+  const opts = `<option value="all">${T('ct.allline')}</option>` +
     PLC_MES.map((p,i)=>`<option value="${i}">${p.code} — ${p.stage}</option>`).join('');
   ['loss-scope','prod-scope','pl-scope'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
@@ -44,7 +44,7 @@ function ctxHtml(period, o){
     return dnav(o.stepDate,o.setDate,o.date) + `<span style="margin-left:6px">${T('pr.shift')}:</span>`+
       `<select class="ctx-sel" onchange="${o.setShift}(this.value)">`+
       SHIFT_LIST.map(s=>`<option value="${s}"${s===o.shift?' selected':''}>${s} ${SHIFT_HM[s]}</option>`).join('')+`</select>`;
-  if(period==='daily')  return dnav(o.stepDate,o.setDate,o.date) + `<span style="color:#888;margin-left:6px">(gộp mọi ca trong ngày)</span>`;
+  if(period==='daily')  return dnav(o.stepDate,o.setDate,o.date) + `<span style="color:#888;margin-left:6px">${T('pr.dailyall')}</span>`;
   if(period==='weekly'){ const w=weekDates(o.weekOff); return dstep(o.stepWeek, `${T('pr.weekly')} ${ddmm(w[0])}–${ddmm(w[6])}`); }
   return dstep(o.stepMonth, `${T('pr.monthly')} ${MONTHS[o.monthOff]}`);
 }
@@ -55,12 +55,12 @@ function periodShifts(period, date, shift, weekOff, monthOff){
                                  sub:`${T('pr.shift')} ${shift} (${SHIFT_HM[shift]}) · ${fmtD(date)}`
                                      + (lineRuns(shift,date) && !isShiftRunning(date,shift)
                                         ? ` · <span style="color:#1E8A2E;font-weight:700">${T('ct.shiftdone')}</span>` : ''),
-                                 off: !lineRuns(shift,date) ? `line KHÔNG chạy ca ${shift} ngày này (xem lịch ở Cấu hình → Ca làm việc)`
+                                 off: !lineRuns(shift,date) ? TF('ct.lineoffshift', shift)
                                       : (isShiftRunning(date,shift) ? T('ct.shiftrun') : '') };
-  if(period==='daily')  return { n: shiftsInDay(date), sub:`${fmtD(date)} · ${shiftsInDay(date)} ca theo lịch` };
+  if(period==='daily')  return { n: shiftsInDay(date), sub:`${fmtD(date)} · ${TF('pr.nshiftsched', shiftsInDay(date))}` };
   if(period==='weekly'){ const w=weekDates(weekOff);
-                         return { n: shiftsInWeek(weekOff), sub:`${T('pr.weekly')} ${ddmm(w[0])}–${ddmm(w[6])}/${w[6].getFullYear()} · ${shiftsInWeek(weekOff)} ca theo lịch` }; }
-  return { n: shiftsInMonth(monthOff), sub:`${T('pr.monthly')} ${MONTHS[monthOff]} · ${shiftsInMonth(monthOff)} ca theo lịch` };
+                         return { n: shiftsInWeek(weekOff), sub:`${T('pr.weekly')} ${ddmm(w[0])}–${ddmm(w[6])}/${w[6].getFullYear()} · ${TF('pr.nshiftsched', shiftsInWeek(weekOff))}` }; }
+  return { n: shiftsInMonth(monthOff), sub:`${T('pr.monthly')} ${MONTHS[monthOff]} · ${TF('pr.nshiftsched', shiftsInMonth(monthOff))}` };
 }
 
 /* Gộp phân bổ thời gian theo phạm vi (1 PLC hoặc toàn line) × số ca trong kỳ */
@@ -92,7 +92,7 @@ function renderLoss(){
     `${T('lo.alloc')} — ${scopeLbl}`;
 
   if(planned === 0 || P.n === 0){
-    bar.innerHTML = `<div style="padding:18px;color:#C9272F;font-weight:700">Kỳ đang chọn không có ca nào chạy — chọn ca/ngày khác, hoặc bật ca ở <b>Cấu hình → Ca làm việc</b>.</div>`;
+    bar.innerHTML = `<div style="padding:18px;color:#C9272F;font-weight:700">${T('lo.noshift')}</div>`;
     document.getElementById('loss-kpi').innerHTML = '';
     document.getElementById('ts-rows').innerHTML = '';
     document.getElementById('loss-heat').innerHTML = '';

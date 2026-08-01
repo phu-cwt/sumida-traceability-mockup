@@ -55,7 +55,7 @@ function renderRt(){
           const base=si*SHIFT_MIN; if(base>=nowOff) return;
           const cap=base+Math.min(SHIFT_MIN, nowOff-base);
           if(!lineRuns(sid,date)){
-            cells += `<div class="tl-off" style="left:${base/total*100}%;width:${(cap-base)/total*100}%">${(cap-base)/total*100>4?'nghỉ '+sid:''}</div>`;
+            cells += `<div class="tl-off" style="left:${base/total*100}%;width:${(cap-base)/total*100}%">${(cap-base)/total*100>4?TF('tl.off', sid):''}</div>`;
             return;
           }
           const isCur = nowOff > base && nowOff < base + SHIFT_MIN;   // ca đang chạy
@@ -77,7 +77,7 @@ function renderRt(){
     root.innerHTML = `<div class="tl-ruler-row"><div></div><div class="tl-ruler">${ticks}</div></div>`
       + PLC_MES.map((p,i)=>{
         let cells;
-        if(!lineRuns(shift,date)) cells = `<div class="tl-off" style="left:0;width:100%">Line nghỉ ca ${shift}</div>`;
+        if(!lineRuns(shift,date)) cells = `<div class="tl-off" style="left:0;width:100%">${TF('tl.lineoff', shift)}</div>`;
         else {
           cells = shiftHtml(i, shift, 0, elapsed, total, shiftStart, 6, elapsed<total ? elapsed : null);
           cells += tailHtml(elapsed, total, 10);

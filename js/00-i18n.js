@@ -31,6 +31,11 @@ const I18N = {
     "th.status":"Trạng thái",
     "ct.scope":"Phạm vi:",
     "ct.allline":"Toàn line (14 PLC)",
+    "lo.noshift":"Kỳ đang chọn không có ca nào chạy — chọn ca/ngày khác, hoặc bật ca ở Cấu hình → Ca làm việc.",
+    "cap.recentshift":"7 ngày gần nhất · cùng ca {0}", "cap.recentday":"7 ngày gần nhất", "cap.recentweek":"7 tuần gần nhất", "cap.recentmonth":"7 tháng gần nhất",
+    "mt.name":"Vật liệu", "mt.qty":"SL nạp", "mt.exp":"Hạn", "mt.result":"KQ",
+    "tr.notfound":"Không tìm thấy serial {0} trong bộ data thật ({1} serial). Chọn 1 serial trong danh sách gợi ý của ô nhập.", "tr.nojudge":"chưa có phán định",
+    "gl.all":"Tất cả", "gl.allcam":"Tất cả ({0} controller · {1} head)",
     "ov.lineinfo":"Thông tin toàn line — 14 PLC",
     "dt.devtip":"Thiết bị đo theo doc 09/07", "dt.msconn":"Kết nối PC ↔ PLC",
     "dt.msrun":"Trạng thái chạy", "dt.msalarm":"Lỗi",
@@ -141,6 +146,8 @@ const I18N = {
     "oee.oee":"OEE", "oee.a":"Tỷ lệ vận hành (A)", "oee.p":"Hiệu suất (P)", "oee.q":"Chất lượng (Q)",
     /* kỳ */
     "pr.shift":"Ca", "pr.daily":"Ngày", "pr.weekly":"Tuần", "pr.monthly":"Tháng",
+    "pr.dailyall":"(gộp mọi ca trong ngày)", "pr.nshiftsched":"{0} ca theo lịch", "pr.nshift":"{0} ca", "pr.shiftcount":"Số ca", "ct.lineoffshift":"line KHÔNG chạy ca {0} ngày này (xem lịch ở Cấu hình → Ca làm việc)",
+    "ct.nodata":"Không có số liệu", "tl.off":"nghỉ {0}", "tl.lineoff":"Line nghỉ ca {0}", "tl.lineoffthis":"Line nghỉ ca này", "al.nohist":"Không có lịch sử lỗi.", "al.nofilter":"Không có lỗi phù hợp bộ lọc.",
     /* header bảng */
     "th.timestart":"Bắt đầu", "th.timestop":"Kết thúc", "th.plc":"PLC", "th.stage":"Công đoạn",
     "th.ok":"OK", "th.ng":"NG", "th.total":"Tổng",
@@ -173,6 +180,11 @@ const I18N = {
     "th.status":"Status",
     "ct.scope":"Scope:",
     "ct.allline":"Whole line (14 PLC)",
+    "lo.noshift":"The selected period has no running shift — pick another shift/day, or enable shifts in Settings → Shifts.",
+    "cap.recentshift":"last 7 days · same shift {0}", "cap.recentday":"last 7 days", "cap.recentweek":"last 7 weeks", "cap.recentmonth":"last 7 months",
+    "mt.name":"Material", "mt.qty":"Qty in", "mt.exp":"Expiry", "mt.result":"Result",
+    "tr.notfound":"Serial {0} not found in the real data set ({1} serials). Pick a serial from the input suggestions.", "tr.nojudge":"no judgement",
+    "gl.all":"All", "gl.allcam":"All ({0} controllers · {1} heads)",
     "ov.lineinfo":"Whole line overview — 14 PLC",
     "dt.devtip":"Measuring device per the 09/07 document", "dt.msconn":"PC ↔ PLC connection",
     "dt.msrun":"Run status", "dt.msalarm":"Alarm",
@@ -279,6 +291,8 @@ const I18N = {
     "pd.planct":"Planned cycle time", "pd.targetqty":"Target output qty (manual input)",
     "oee.oee":"OEE", "oee.a":"Availability (A)", "oee.p":"Performance (P)", "oee.q":"Quality (Q)",
     "pr.shift":"Shift", "pr.daily":"Daily", "pr.weekly":"Weekly", "pr.monthly":"Monthly",
+    "pr.dailyall":"(all shifts of the day)", "pr.nshiftsched":"{0} shifts scheduled", "pr.nshift":"{0} shifts", "pr.shiftcount":"Shifts", "ct.lineoffshift":"line not scheduled for shift {0} on this day (see Settings → Shifts)",
+    "ct.nodata":"No data", "tl.off":"off {0}", "tl.lineoff":"Line off — shift {0}", "tl.lineoffthis":"Line off this shift", "al.nohist":"No alarm history.", "al.nofilter":"No alarms match the filter.",
     "th.timestart":"Time start", "th.timestop":"Time stop", "th.plc":"PLC", "th.stage":"Process",
     "th.ok":"OK", "th.ng":"NG", "th.total":"Total",
     "th.no":"No", "th.raised":"Raised at", "th.content":"Alarm content",
@@ -311,6 +325,11 @@ const I18N = {
     "th.status":"状態",
     "ct.scope":"範囲:",
     "ct.allline":"ライン全体 (14 PLC)",
+    "lo.noshift":"選択した期間に稼働シフトがありません — 別のシフト/日を選ぶか、設定→シフト勤務 で有効化してください。",
+    "cap.recentshift":"直近7日 · 同一シフト {0}", "cap.recentday":"直近7日", "cap.recentweek":"直近7週", "cap.recentmonth":"直近7ヶ月",
+    "mt.name":"材料", "mt.qty":"投入量", "mt.exp":"有効期限", "mt.result":"判定",
+    "tr.notfound":"シリアル {0} は実データ（{1} 件）に見つかりません。入力候補から選択してください。", "tr.nojudge":"判定なし",
+    "gl.all":"すべて", "gl.allcam":"すべて（{0} コントローラ · {1} ヘッド）",
     "ov.lineinfo":"ライン全体情報 — 14 PLC",     // TODO review JA
     "dt.devtip":"09/07資料に基づく測定機器", "dt.msconn":"PC ↔ PLC 接続",
     "dt.msrun":"運転状態", "dt.msalarm":"異常",
@@ -432,7 +451,9 @@ const I18N = {
     "pd.planct":"計画Cycleタイム",                    // info 1-4-3
     "pd.targetqty":"目標生産数量入力(生産目標)",       // info 1-4-2
     "oee.oee":"OEE", "oee.a":"稼働率 (A)", "oee.p":"性能 (P)", "oee.q":"品質 (Q)",
-    "pr.shift":"shift", "pr.daily":"Daily", "pr.weekly":"Weekly", "pr.monthly":"Monthly", // info 1-1-7
+    "pr.shift":"シフト", "pr.daily":"日", "pr.weekly":"週", "pr.monthly":"月", // info 1-1-7
+    "pr.dailyall":"（当日全シフト合算）", "pr.nshiftsched":"{0} シフト（予定）", "pr.nshift":"{0} シフト", "pr.shiftcount":"シフト数", "ct.lineoffshift":"この日はシフト{0}の稼働予定がありません（設定→シフト勤務 参照）",
+    "ct.nodata":"データなし", "tl.off":"休止 {0}", "tl.lineoff":"ライン休止 — シフト{0}", "tl.lineoffthis":"このシフトはライン休止", "al.nohist":"警報履歴なし。", "al.nofilter":"条件に一致する警報なし。",
     "th.timestart":"開始時刻", "th.timestop":"終了時刻", "th.plc":"PLC", "th.stage":"工程",
     "th.ok":"OK", "th.ng":"NG", "th.total":"合計",
     "th.no":"No", "th.raised":"発生日時", "th.content":"警報内容",
@@ -466,6 +487,11 @@ const I18N = {
     "th.status":"状态",
     "ct.scope":"范围:",
     "ct.allline":"整线 (14 PLC)",
+    "lo.noshift":"所选期间没有运行的班次 — 请选择其他班次/日期，或在 设置→班次 中启用。",
+    "cap.recentshift":"最近7天 · 同一班次 {0}", "cap.recentday":"最近7天", "cap.recentweek":"最近7周", "cap.recentmonth":"最近7个月",
+    "mt.name":"材料", "mt.qty":"投入量", "mt.exp":"有效期", "mt.result":"判定",
+    "tr.notfound":"在真实数据（{1} 个）中未找到序列号 {0}。请从输入建议中选择。", "tr.nojudge":"无判定",
+    "gl.all":"全部", "gl.allcam":"全部（{0} 控制器 · {1} 头）",
     "ov.lineinfo":"整线信息 — 14 PLC",           // TODO review ZH
     "dt.devtip":"依 09/07 文件的测量设备", "dt.msconn":"PC ↔ PLC 连接",
     "dt.msrun":"运行状态", "dt.msalarm":"报警",
@@ -579,6 +605,8 @@ const I18N = {
     "pd.targetqty":"目标生产数量（手动录入）",                                // TODO review ZH
     "oee.oee":"OEE", "oee.a":"稼动率 (A)", "oee.p":"性能 (P)", "oee.q":"品质 (Q)", // TODO review ZH
     "pr.shift":"班次", "pr.daily":"日", "pr.weekly":"周", "pr.monthly":"月",   // TODO review ZH
+    "pr.dailyall":"（合并当日所有班次）", "pr.nshiftsched":"{0} 个班次（计划）", "pr.nshift":"{0} 个班次", "pr.shiftcount":"班次数", "ct.lineoffshift":"当天班次{0}无排产（见 设置→班次）",
+    "ct.nodata":"无数据", "tl.off":"停 {0}", "tl.lineoff":"产线停 — 班次{0}", "tl.lineoffthis":"本班次产线停", "al.nohist":"无报警历史。", "al.nofilter":"无符合筛选的报警。",
     "th.timestart":"开始时间", "th.timestop":"结束时间", "th.plc":"PLC", "th.stage":"工序",
     "th.ok":"OK", "th.ng":"NG", "th.total":"合计",
     "th.no":"序号", "th.raised":"发生时间", "th.content":"报警内容",           // TODO review ZH

@@ -54,9 +54,9 @@ function recentCols(){
   return cols;
 }
 function periodCap(){
-  return lossPeriod==='shift'  ? `7 ngày gần nhất · cùng ca ${lossShift}`
-       : lossPeriod==='daily'  ? `7 ngày gần nhất`
-       : lossPeriod==='weekly' ? `7 tuần gần nhất` : `7 tháng gần nhất`;
+  return lossPeriod==='shift'  ? TF('cap.recentshift', lossShift)
+       : lossPeriod==='daily'  ? T('cap.recentday')
+       : lossPeriod==='weekly' ? T('cap.recentweek') : T('cap.recentmonth');
 }
 function renderHeat(){
   const cols=recentCols();
@@ -158,7 +158,7 @@ function wireTsTip(){
       const idl=e.target.closest('.tl-idle');
       if(idl){ showTip(`<span class="tt-sw" style="background:var(--st-idle)"></span>${T('st.idle')}<br><span class="tt-time">${idl.dataset.from} → ${idl.dataset.to}</span> <span style="color:#bbb">(${idl.dataset.dur})</span>`, e); return; }
       const off=e.target.closest('.tl-off');
-      if(off){ showTip(`<span class="tt-sw" style="background:#E2E2E2"></span>Line nghỉ ca này`, e); return; }
+      if(off){ showTip(`<span class="tt-sw" style="background:#E2E2E2"></span>${T('tl.lineoffthis')}`, e); return; }
       const tl=e.target.closest('.tl-seg');
       if(tl){ const s=+tl.dataset.s;
         showTip(`<span class="tt-sw" style="background:${ST_HEX[s]}"></span>${T(ST_KEYS[s])}<br><span class="tt-time">${tl.dataset.from} → ${tl.dataset.to}</span> <span style="color:#bbb">(${tl.dataset.dur})</span>`, e); return; }

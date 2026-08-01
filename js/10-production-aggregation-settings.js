@@ -43,7 +43,7 @@ function renderProd(){
     }
     if(f===0){
       return `<tr style="opacity:.6"><td class="l">${p.code} — ${p.stage}</td><td><span class="mono">${p.mes}</span></td>
-        <td colspan="8" style="background:#f0f0f0;color:#888;text-align:left">Line nghỉ kỳ này</td></tr>`;
+        <td colspan="8" style="background:#f0f0f0;color:#888;text-align:left">${T('ct.lineoffperiod')}</td></tr>`;
     }
     const ok=c.ok*f, ng=c.ng*f, wip=c.wip*f, input=ok+ng+wip;
     const ctAct = run*60/ok;
@@ -62,8 +62,8 @@ function renderProd(){
   const kc = PROD_CNT[ki], krun = LOSS_TS[ki][1]*f, kct = PLAN_CT[ki];
   if(!kc || kct===null || f===0){
     document.getElementById('prod-kpi').innerHTML =
-      `<div class="la-kpi" style="grid-column:1/-1"><div class="lbl">Không có số liệu</div>
-       <div class="val" style="font-size:14px">${f===0?'Line nghỉ kỳ này':'Công đoạn không đếm theo sản phẩm'}</div></div>`;
+      `<div class="la-kpi" style="grid-column:1/-1"><div class="lbl">${T('ct.nodata')}</div>
+       <div class="val" style="font-size:14px">${f===0?T('ct.lineoffperiod'):T('ct.ovenna')}</div></div>`;
     return;
   }
   const ok=kc.ok*f, ng=kc.ng*f, wip=kc.wip*f, input=ok+ng+wip;
@@ -172,7 +172,7 @@ function wireAggTip(){
       const grp=e.target.closest('.grp'); if(!grp){ hideTip(); return; }
       const d=aggCur[+grp.dataset.idx]; if(!d){ hideTip(); return; }
       const input=d.ok+d.ng+d.wip;
-      showTip(`<div style="font-weight:800;margin-bottom:4px">${d.lab.replace('<br>',' ')} · ${d.nShift} ca</div>`+
+      showTip(`<div style="font-weight:800;margin-bottom:4px">${d.lab.replace('<br>',' ')} · ${TF('pr.nshift', d.nShift)}</div>`+
         `<span class="tt-sw" style="background:#2ECC40"></span>${T('th.ok')} <b>${nf(d.ok)}</b><br>`+
         `<span class="tt-sw" style="background:#E63946"></span>${T('th.ng')} <b>${nf(d.ng)}</b> <span style="color:#bbb">(${(d.ng/input*100).toFixed(2)}%)</span><br>`+
         `<span class="tt-sw" style="background:#39A6D6"></span>${T('pd.wip')} <b>${nf(d.wip)}</b><br>`+
@@ -183,7 +183,7 @@ function wireAggTip(){
 }
 function exportAggCSV(){
   const A=aggRows();
-  const head=[T('th.period'),'Số ca',T('pd.input'),T('th.ok'),T('th.ng'),T('pd.wip'),T('th.ngrate'),T('th.runh'),T('oee.a'),T('th.alarms')];
+  const head=[T('th.period'),T('pr.shiftcount'),T('pd.input'),T('th.ok'),T('th.ng'),T('pd.wip'),T('th.ngrate'),T('th.runh'),T('oee.a'),T('th.alarms')];
   const esc=v=>`"${String(v).replace(/"/g,'""')}"`;
   const lines=[head.map(esc).join(',')];
   A.forEach(d=>{ const input=d.ok+d.ng+d.wip;

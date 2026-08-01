@@ -27,7 +27,7 @@ function alarmDuration(raised, resolved){
 function alarmHistoryBlock(code){
   const rows = ALARMS.filter(a=>a.plc===code);
   const body = rows.length===0
-    ? `<tr><td colspan="5" style="padding:14px;color:#888">Không có lịch sử lỗi.</td></tr>`
+    ? `<tr><td colspan="5" style="padding:14px;color:#888">${T('al.nohist')}</td></tr>`
     : rows.map((a,i)=>`
       <tr class="${a.resolved?'':'row-ng'}">
         <td>${i+1}</td>
@@ -53,7 +53,7 @@ function renderAlarmsPage(rows){
   const data = rows || ALARMS;
   const body = document.getElementById('alarms-body');
   if(!body) return;
-  if(data.length===0){ body.innerHTML = `<tr><td colspan="7" style="padding:16px;color:#888">Không có lỗi phù hợp bộ lọc.</td></tr>`; return; }
+  if(data.length===0){ body.innerHTML = `<tr><td colspan="7" style="padding:16px;color:#888">${T('al.nofilter')}</td></tr>`; return; }
   body.innerHTML = data.map((a,i)=>`
     <tr class="${a.resolved?'':'row-ng'}">
       <td>${i+1}</td>

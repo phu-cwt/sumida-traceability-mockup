@@ -34,11 +34,11 @@ let curPage = 1;
 function wireGalleryLists(){
   const cam = document.getElementById('gal-cam');
   const nHead = CAM_LIST.reduce((a,c)=>a+c.n,0);
-  cam.innerHTML = `<option value="">Tất cả (${CAM_LIST.length} controller · ${nHead} head)</option>` +
+  cam.innerHTML = `<option value="">${TF('gl.allcam', CAM_LIST.length, nHead)}</option>` +
     CAM_LIST.map(c=>`<option value="${c.id}">${c.id} — ${c.plc} · ${c.ctrl} (${c.head} ×${c.n}) · ${c.use}</option>`).join('');
   const defs = [...new Set(CAM_LIST.flatMap(c=>c.defects))];
   document.getElementById('gal-defect').innerHTML =
-    `<option value="">Tất cả</option>` + defs.map(d=>`<option value="${d}">${d}</option>`).join('');
+    `<option value="">${T('gl.all')}</option>` + defs.map(d=>`<option value="${d}">${d}</option>`).join('');
   document.getElementById('gal-month').textContent = (62250).toLocaleString('en-US');
 }
 function filteredNG(){

@@ -52,10 +52,10 @@ function materialRows(v){
   const dates = [f[6],f[7]].filter(Boolean);
   const res = f[9]||'';
   const out = [`<div class="qrow"><span>LOT NO</span><span style="color:#B8860B">${lot}</span></div>`];
-  out.push(`<div class="qrow"><span>Vật liệu</span><span>${name.length>16?name.slice(0,15)+'…':name}</span></div>`);
-  if(qty)         out.push(`<div class="qrow"><span>SL nạp</span><span>${qty}${unit?' '+unit:''}</span></div>`);
-  if(dates.length)out.push(`<div class="qrow"><span>Hạn</span><span>${dates[dates.length-1]}</span></div>`);
-  if(res)         out.push(`<div class="qrow"><span>KQ</span><span style="color:${/pass/i.test(res)?'#1E8A2E':'#C9272F'}">${res}</span></div>`);
+  out.push(`<div class="qrow"><span>${T('mt.name')}</span><span>${name.length>16?name.slice(0,15)+'…':name}</span></div>`);
+  if(qty)         out.push(`<div class="qrow"><span>${T('mt.qty')}</span><span>${qty}${unit?' '+unit:''}</span></div>`);
+  if(dates.length)out.push(`<div class="qrow"><span>${T('mt.exp')}</span><span>${dates[dates.length-1]}</span></div>`);
+  if(res)         out.push(`<div class="qrow"><span>${T('mt.result')}</span><span style="color:${/pass/i.test(res)?'#1E8A2E':'#C9272F'}">${res}</span></div>`);
   return out.join('');
 }
 function fieldLabel(proc, k){
@@ -72,7 +72,7 @@ function loadTrace(){
 
   if(!S){
     document.getElementById('trace-meta').innerHTML =
-      `<div style="grid-column:1/-1;color:#C9272F;font-weight:700">Không tìm thấy serial <span style="font-family:Consolas,monospace">${raw||'(trống)'}</span> trong bộ data thật (${MOCK_DATA.meta.srcSerials.toLocaleString('en-US')} serial). Chọn 1 serial trong danh sách gợi ý của ô nhập.</div>`;
+      `<div style="grid-column:1/-1;color:#C9272F;font-weight:700">${TF('tr.notfound', `<span style="font-family:Consolas,monospace">${raw||'—'}</span>`, MOCK_DATA.meta.srcSerials.toLocaleString('en-US'))}</div>`;
     document.getElementById('trace-track').innerHTML = '';
     document.getElementById('trace-notes').innerHTML = '';
     return;
@@ -89,7 +89,7 @@ function loadTrace(){
     <div><div class="lbl">${T('th.judge')}</div><div class="val">${
       S.finalJudge==='NG' ? '<span class="pill ng">NG</span>'
       : S.finalJudge==='OK' ? '<span class="pill ok">OK</span>'
-      : '<span class="pill stop">chưa có phán định</span>'}</div></div>`;
+      : `<span class="pill stop">${T('tr.nojudge')}</span>`}</div></div>`;
 
   document.getElementById('trace-track').innerHTML = PROCS.map((p,i)=>{
     const rec = S.recs[p.code];
