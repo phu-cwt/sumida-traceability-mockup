@@ -10,6 +10,7 @@
    tự từ. Những khối đó phải khai `data-i18n-html` với một khoá cho cả đoạn. */
 const UI_I18N = {
   en:{
+    "BẢNG TỔNG HỢP":"SUMMARY TABLE", "SẢN LƯỢNG THEO KỲ — SỐ RA OK / NG":"OUTPUT BY PERIOD — OK / NG", "XU HƯỚNG TỶ LỆ VẬN HÀNH THEO KỲ":"OPERATING-RATE TREND BY PERIOD", "THÔNG SỐ THEO CÔNG ĐOẠN — Cycle time kế hoạch + Sản lượng mục tiêu (mỗi PLC)":"PARAMETERS BY PROCESS — Planned cycle time + Target output (per PLC)",
     "Bắt đầu":"Started", "Công đoạn ghi nhận":"Processes recorded",
     "Model / mã SP":"Model / part no.",
     "Lô sản xuất":"Production lot", "Lô sản xuất (tham chiếu)":"Production lot (reference)",
@@ -131,6 +132,7 @@ const UI_I18N = {
     "KT vị trí PIN connector": "PIN connector position check",
   },
   ja:{
+    "BẢNG TỔNG HỢP":"集計表", "SẢN LƯỢNG THEO KỲ — SỐ RA OK / NG":"期間別 生産数 — OK / NG", "XU HƯỚNG TỶ LỆ VẬN HÀNH THEO KỲ":"期間別 実稼働率の推移", "THÔNG SỐ THEO CÔNG ĐOẠN — Cycle time kế hoạch + Sản lượng mục tiêu (mỗi PLC)":"工程別パラメータ — 計画サイクルタイム + 目標生産数（PLC別）",
     "Bắt đầu":"開始", "Công đoạn ghi nhận":"記録された工程",
     "Model / mã SP":"機種 / 品番",
     "Lô sản xuất":"製造ロット", "Lô sản xuất (tham chiếu)":"製造ロット (参考)",
@@ -252,6 +254,7 @@ const UI_I18N = {
     "KT vị trí PIN connector": "PINコネクタ位置検査",
   },
   zh:{
+    "BẢNG TỔNG HỢP":"汇总表", "SẢN LƯỢNG THEO KỲ — SỐ RA OK / NG":"各期产量 — OK / NG", "XU HƯỚNG TỶ LỆ VẬN HÀNH THEO KỲ":"各期运行率趋势", "THÔNG SỐ THEO CÔNG ĐOẠN — Cycle time kế hoạch + Sản lượng mục tiêu (mỗi PLC)":"各工序参数 — 计划节拍 + 目标产量（每PLC）",
     "Bắt đầu":"开始", "Công đoạn ghi nhận":"已记录工序",
     "Model / mã SP":"机型 / 品番",
     "Lô sản xuất":"生产批次", "Lô sản xuất (tham chiếu)":"生产批次 (参考)",
