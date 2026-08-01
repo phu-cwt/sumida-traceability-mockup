@@ -2,17 +2,18 @@
    Tach tu Sumida_Traceability_Mock_UI.html — KHONG sua thu tu nap file,
    cascade CSS / thu tu khai bao JS phu thuoc vao no. */
   /* ===== HISTORY ===== */
-  .filter-row{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:10px;margin-bottom:10px;align-items:end}
-  .filter-row label{display:flex;flex-direction:column;font-size:12px;color:#333;gap:3px}
-  .filter-row input,.filter-row select{padding:6px 8px;border:1px solid #111;font-size:13px;background:#fff;border-radius:14px}
+  /* Đồng bộ 1 chuẩn với .ctxbar: flex, label ngang, control bo 6px + viền 1px #111. */
+  .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .filter-row label{display:inline-flex;flex-direction:row;align-items:center;gap:6px;font-size:13px;color:#333}
+  .filter-row input,.filter-row select{padding:4px 8px;border:1px solid #111;font-size:13px;background:#fff;border-radius:6px}
   .btn{background:#1F1F1F;color:#fff;border:none;padding:8px 22px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px}
   .btn:hover{background:#3a3a3a}
   .btn.danger{background:var(--pink);color:#fff}
   .btn.danger:hover{background:#d97380}
   .history-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #111}
-  .history-table th{background:#CFCFCF;color:#111;padding:8px;font-size:12px;border:1px solid #9a9a9a;text-align:center;font-weight:700;position:sticky;top:0;z-index:2}
+  .history-table th{background:#CFCFCF;color:#111;padding:8px;font-size:13px;border:1px solid #9a9a9a;text-align:center;font-weight:700;position:sticky;top:0;z-index:2}
   .history-table th:first-child{background:#1E88E5;color:#fff}
-  .history-table td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:12px}
+  .history-table td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:13px}
   .row-ng{background:#F4A6AB}
   .history-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
   .legend{display:flex;gap:18px;font-size:12px;align-items:flex-end}
@@ -39,18 +40,15 @@
   .shift-row input[type=text]{padding:6px 8px;border:1px solid #999;border-radius:4px;font-family:Consolas,monospace}
 
   /* ===== TRACE TIMELINE ===== */
-  .trace-bar{background:#fff;border:1px solid #111;padding:14px;margin-bottom:14px}
-  .trace-bar .row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
-  .trace-bar label{display:flex;flex-direction:column;font-size:12px;gap:3px}
-  /* Nhãn PHẢI nằm trong .cap: label là flex column, mọi text node trần trong nó
-     thành một flex item riêng ⇒ dấu ":" tách khỏi chữ, rơi xuống dòng thứ ba và
-     đẩy lệch chiều cao label so với các label bên cạnh (align-items:end). */
-  .trace-bar label>.cap{color:#555;white-space:nowrap}
-  .trace-bar input,.trace-bar select{border:1px solid #111;font-size:14px;border-radius:14px;background:#fff}
-  .trace-bar input{padding:8px;font-family:Consolas,monospace;min-width:240px}
-  /* select là widget gốc của trình duyệt: bỏ qua line-height, cao hơn input 4px ở
-     cùng padding ⇒ bù bằng padding dọc 6px để hai ô cao bằng nhau (35px). */
-  .trace-bar select{padding:6px 8px;font-family:inherit}
+  /* Thanh filter đồng bộ 1 chuẩn với .ctxbar (loss/prod/agg): không hộp viền, label
+     nằm NGANG, control bo góc 6px + viền 1px #111 — nhìn nhất quán mọi màn. */
+  .trace-bar{margin-bottom:14px}
+  .trace-bar .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .trace-bar label{display:flex;flex-direction:row;align-items:center;font-size:13px;gap:6px}
+  .trace-bar label>.cap{color:#444;white-space:nowrap}
+  .trace-bar input,.trace-bar select{border:1px solid #111;font-size:13px;border-radius:6px;background:#fff;padding:4px 8px}
+  .trace-bar input{font-family:Consolas,monospace;min-width:240px}
+  .trace-bar select{font-family:inherit}
   .trace-summary{background:#fff;border:1px solid #111;padding:10px;margin-bottom:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
   .trace-summary div .lbl{font-size:11px;color:#666;text-transform:uppercase}
   .trace-summary div .val{font-size:14px;font-weight:700;font-family:Consolas,monospace}
@@ -70,7 +68,10 @@
   .timeline .step .data b{color:#111}
 
   /* ===== NG GALLERY ===== */
-  .gallery-filters{background:#fff;border:1px solid #111;padding:12px;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+  /* Đồng bộ 1 chuẩn với .ctxbar: không hộp viền, label ngang, control bo 6px + viền 1px. */
+  .gallery-filters{margin-bottom:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .gallery-filters label{display:inline-flex;align-items:center;gap:6px;font-size:13px}
+  .gallery-filters input,.gallery-filters select{border:1px solid #111;border-radius:6px;padding:4px 8px;font-size:13px;background:#fff;font-family:inherit}
   .gallery-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
   .ng-card{background:#fff;border:1px solid #111;cursor:pointer;overflow:hidden;transition:transform .12s}
   .ng-card:hover{transform:translateY(-2px);box-shadow:2px 2px 0 #111}
@@ -162,7 +163,7 @@
   .fab{position:fixed;right:24px;bottom:42px;z-index:40;display:inline-flex;align-items:center;gap:8px;background:#B8860B;color:#fff;border:none;border-radius:24px;padding:12px 18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.28)}
   .fab:hover{background:#a4780a}
   .sg-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
-  .sg-table th{background:#1F1F1F;color:#fff;text-align:left;padding:6px 8px;font-size:12px}
+  .sg-table th{background:#1F1F1F;color:#fff;text-align:left;padding:6px 8px;font-size:13px}
   .sg-table td{border:1px solid #ddd;padding:6px 8px;vertical-align:top}
   .sg-table code{background:#F0F0F0;border:1px solid #ccc;border-radius:3px;padding:1px 5px;font-family:Consolas,monospace;font-size:11px;color:#1b1b1b}
   .sg-have{font-size:12px;color:#1E8A2E;background:#EAFBEA;border:1px solid #A7E6A2;padding:6px 9px;margin-bottom:10px}

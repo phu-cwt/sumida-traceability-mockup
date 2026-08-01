@@ -110,7 +110,10 @@ function timelineAt(i, nowIn){
 const RESTART_WAIT  = 10;      // phút chờ máy sẵn sàng sau khi bật lại
 const RESTART_CHECK = 15;      // phút kiểm tra trước khi cho chạy lại
 const EARLY_STOP = [
-  {i:7, shift:'S1', at:360, dur:80}    // PLC08 tắt 12:00–13:20, bật lại rồi chờ + kiểm tra
+  {i:7,  shift:'S1', at:360, dur:80},   // PLC08 tắt 12:00–13:20, bật lại rồi chờ + kiểm tra
+  {i:3,  shift:'S1', at:150, dur:55},   // PLC04 tắt 08:30–09:25 (S1)
+  {i:10, shift:'S2', at:90,  dur:65},   // PLC11 tắt 15:30–16:35 (S2)
+  {i:13, shift:'S2', at:200, dur:45}    // PLC14 tắt 17:20–18:05 (S2)
 ];
 /* Một đoạn trạng thái bất kỳ trên trục dài `total` (dùng cho trình tự bật lại) */
 function stateHtml(s, from, to, total, clockBase, lblMinPct){

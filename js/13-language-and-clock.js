@@ -72,7 +72,7 @@ function setLang(l){
   fillTraceMeta();      // 2 số nằm trong câu vừa bị vẽ lại ở trên — phải điền lại
   fillSerialSuggest();  // nhãn gợi ý serial là chuỗi ghép, phải vẽ lại theo ngôn ngữ
   // Nội dung render bằng JS phải vẽ lại để đổi nhãn theo ngôn ngữ mới
-  renderLegends(); renderLoss(); renderProd(); renderAgg(); renderCT(); renderRt();
+  renderLegends(); renderLoss(); renderProd(); renderAgg(); renderCT(); renderRt(); renderProdList();
   /* Ảnh NG + Lịch sử lỗi vẽ 1 lần lúc khởi động; nhãn của chúng nằm trong thuộc tính
      `title` nên bộ duyệt DOM (chỉ đi qua node văn bản) không sửa được ⇒ phải vẽ lại. */
   renderGallery(); renderAlarmsPage();

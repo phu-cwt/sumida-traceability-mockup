@@ -41,6 +41,13 @@ const LOSS_TS = [
   [ 32,300, 23, 30, 40]   // PLC14 KT cuối — nhiều lỗi
 ];
 
+/* "Máy không hoạt động" (idle / downtime) 1 ca / 1 máy — tổn thất khả dụng, KHÁC
+   nhau theo máy: máy hay lỗi (PLC01/04/10/11/14) dừng nhiều, máy chạy êm (PLC08/09)
+   dừng ít. Đây là NGUỒN DUY NHẤT của idle: thanh toàn line, donut, Pareto, thanh
+   per-máy đều lấy từ đây (renderLoss cộng theo phạm vi) → luôn nhất quán.
+   実稼働率/OEE (= run ÷ 実稼働) KHÔNG phụ thuộc idle nên không đổi khi chỉnh mảng này. */
+const LOSS_IDLE = [44, 18, 16, 38, 28, 17, 30, 15, 13, 40, 42, 16, 14, 36];  // Σ = 367' = 6h07m
+
 /* 計画Cycleタイム (giây/sản phẩm) — nhập ở Settings. PLC13 (sấy) không áp dụng. */
 const PLAN_CT = [10.0, 9.8, 9.6, 10.4, 10.0, 9.7, 10.2, 9.6, 9.5, 10.3, 10.6, 9.7, null, 10.2];
 

@@ -128,15 +128,7 @@ ${v}"><span style="font-weight:700;color:#333">${lab}</span><span></span></div>`
     </div>`;
   }).join('');
 
-  /* Ghi chú trung thực về chất lượng data — biến điểm yếu thành thông tin có ích */
-  const noSerialProcs = PROCS.filter(p=>p.serialFrom!=='serial');
-  const noJudgeProcs  = PROCS.filter(p=>!p.judgeUsable);
-  document.getElementById('trace-notes').innerHTML = `
-    <div class="note" style="margin-top:12px">${TF('tr.note1', nWith, PROCS.length, nNoCode?TF('tr.note1b', nNoCode):'')}</div>
-    <div class="note"><span class="cfmchip">ⓘ ${T('tag.confirm')}</span> ${TF('tr.note2', noSerialProcs.length,
-      noSerialProcs.map(p=>`<b>${p.code}</b> (${p.serialFrom==='none'?T('tr.noserialfield'):p.serialFrom})`).join(' · '))}</div>
-    <div class="note"><span class="cfmchip">ⓘ ${T('tag.confirm')}</span> ${TF('tr.note3', PROCS.length-noJudgeProcs.length, PROCS.length,
-      PROCS.filter(p=>p.judgeUsable).map(p=>p.code).join(', ')||'—', noJudgeProcs.length)}</div>
-    <div class="note">${T('tr.note4')}</div>`;
+  /* Note caveat chất lượng data đã gỡ khỏi UI cho gọn — chi tiết vẫn ở Q&A doc. */
+  const tn=document.getElementById('trace-notes'); if(tn) tn.innerHTML='';
 }
 function printTrace(){ window.print(); }

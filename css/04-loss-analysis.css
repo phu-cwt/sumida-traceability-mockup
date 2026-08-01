@@ -41,6 +41,16 @@
   .card h3 .specref{color:#9a9a9a}
   .subpanel{display:none;border:1px solid #9a9a9a;background:var(--bg);padding:11px}
   .subpanel.active{display:block}
+  /* Màn "Tra cứu sản phẩm": bảng lấp đầy chiều cao còn lại + DATA CUỘN TRONG bảng
+     (filter + header đứng yên), trang KHÔNG cuộn. Chuỗi flex subpanel → tblwrap. */
+  #tab-hist-prodlist.subpanel.active{display:flex;flex-direction:column;flex:1;min-height:0}
+  #tab-hist-prodlist > .ctxbar{flex-shrink:0}
+  #tab-hist-prodlist > .card{flex:1;min-height:0;display:flex;flex-direction:column}
+  #tab-hist-prodlist > .card > .bd{flex:1;min-height:0;display:flex;flex-direction:column}
+  #tab-hist-prodlist .tblwrap{flex:1;min-height:0;max-height:none;overflow:auto}
+  /* Bảng kế thừa cỡ chung 13px; chỉ định riêng dòng tên vật liệu (subtitle dưới mã)
+     = 12px cho nhỏ hơn body 1 nấc, thay vì <small> ~10px lệch hẳn. */
+  #tab-hist-prodlist .tbl td small{font-size:12px;color:#888;font-weight:400;font-family:Consolas,monospace}
 
   /* ----- Bộ chọn kỳ / phạm vi ----- */
   .period{display:inline-flex;border:1px solid #111;border-radius:6px;overflow:hidden;vertical-align:middle}
@@ -89,6 +99,11 @@
     padding:1px 7px;border-radius:9px;letter-spacing:.3px;white-space:nowrap;flex-shrink:0;font-style:normal}
   .optchip{background:#E8EEF6;color:#10406e;border:1px solid #9bb6d6}
   .cfmchip{background:#FFF8E1;color:#7a5800;border:1px solid #B8860B}
+  /* Gỡ chip mã spec (1-2, 1-1-7…), chip "tuỳ chọn", chip "cần xác nhận" khỏi UI demo. */
+  .specref,.optchip,.cfmchip{display:none !important}
+  /* Card trong lưới 2 cột cao bằng nhau + phần thân giãn kín để đáy 2 card thẳng hàng. */
+  .grid2>.card{display:flex;flex-direction:column}
+  .grid2>.card .bd{flex:1}
 
   /* ----- THANH BAR 5 TRẠNG THÁI + 2 DẤU NGOẶC (màn Phân tích tổn thất) -----
      div flex + width % thay cho canvas: khớp được bố cục 2 dấu ngoặc và
@@ -114,10 +129,10 @@
   .ts-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;margin:2px 0 8px}
   .ts-legend span{display:inline-flex;align-items:center;gap:5px}
   .ts-legend .sw{width:14px;height:14px;border:1px solid #666;display:inline-block;flex-shrink:0}
-  .ts-row{display:grid;grid-template-columns:150px 1fr 58px;align-items:center;gap:10px;margin-bottom:6px;font-size:12px;cursor:pointer}
+  .ts-row{display:grid;grid-template-columns:185px 1fr 58px;align-items:center;gap:10px;margin-bottom:6px;font-size:12px;cursor:pointer}
   .ts-row:hover .name{color:#1565C0}
   .ts-row .name{font-weight:700;line-height:1.15}
-  .ts-row .name small{font-weight:400;color:#999;display:block;font-family:Consolas,monospace}
+  .ts-row .name small{font-weight:400;color:#999;display:inline;margin-left:6px;font-family:Consolas,monospace}
   .ts-bar{height:24px;display:flex;border:1px solid #999;overflow:hidden;background:#eee}
   .ts-bar .seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
     overflow:hidden;white-space:nowrap;cursor:pointer;font-family:Consolas,"SF Mono",monospace;padding:0 2px}
@@ -143,11 +158,14 @@
 
   /* ----- Bảng dữ liệu kiểu wireframe ----- */
   table.tbl{width:100%;border-collapse:collapse;background:#fff;border:1px solid #111}
-  table.tbl th{background:#CFCFCF;padding:7px 8px;font-size:11px;border:1px solid #9a9a9a;font-weight:700;position:sticky;top:0;z-index:2}
+  /* Cỡ chữ bảng dữ liệu THỐNG NHẤT toàn hệ thống: header = body = 13px (header đậm +
+     nền, không nhỏ hơn body); mã monospace 12px. Áp cho mọi .tbl (agg, alarm, trace,
+     tra cứu SP, chi tiết máy…). .ov-prod / history / sg-table cũng chỉnh về cùng cỡ. */
+  table.tbl th{background:#CFCFCF;padding:7px 8px;font-size:13px;border:1px solid #9a9a9a;font-weight:700;position:sticky;top:0;z-index:2}
   table.tbl th.k{background:var(--blue);color:#fff}
-  table.tbl td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:12px}
+  table.tbl td{padding:6px 8px;border:1px solid #bbb;text-align:center;font-size:13px}
   table.tbl td.l{text-align:left}
-  table.tbl td .mono{font-family:Consolas,monospace;color:#666;font-size:11px}
+  table.tbl td .mono{font-family:Consolas,monospace;color:#666;font-size:12px}
   .v-ok{color:#1E8A2E;font-weight:800}.v-ng{color:#C9272F;font-weight:800}
   .row-under td{background:#FFF3D6}
   .tblwrap{max-height:360px;overflow:auto;border:1px solid #111}
@@ -207,7 +225,7 @@
   .tl-tick.end{transform:translateX(-100%)}
   .tl-row{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;margin-bottom:2px;font-size:12px}
   .tl-name{font-weight:700;line-height:1.15}
-  .tl-name small{font-weight:400;color:#999;display:block;font-family:Consolas,monospace}
+  .tl-name small{font-weight:400;color:#999;display:inline;margin-left:6px;font-family:Consolas,monospace}
   .tl-track{position:relative;height:21px;border:1px solid #999;background:#f4f4f4;overflow:hidden}
   .tl-seg{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
     overflow:hidden;white-space:nowrap;cursor:pointer;font-family:Consolas,"SF Mono",monospace}

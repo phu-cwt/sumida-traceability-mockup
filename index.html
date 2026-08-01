@@ -181,6 +181,7 @@
         <div class="card">
         <h3><span><span data-i18n="lo.trend">XU HƯỚNG TỶ LỆ VẬN HÀNH TOÀN LINE</span> — <span id="loss-trend-ttl">kỳ</span> <span class="optchip">ⓘ tuỳ chọn</span></span><span class="jp">実稼働率 傾向</span></h3>
         <div class="bd"><div class="trend" id="loss-trend"></div>
+          <div class="note" data-i18n="lo.trendnote">Mỗi cột = tỷ lệ vận hành thực toàn line từng kỳ (cùng ca). Màu: đỏ &lt;75% · vàng 75–85% · xanh ≥85% (mục tiêu 85%).</div>
         </div>
         </div>
         <div class="card">
@@ -204,14 +205,13 @@
           <div class="bd">
             <div id="loss-pareto"></div>
             <div class="note" id="loss-pareto-note"></div>
-            <div class="note" data-i18n-html="note.pareto">Nếu WPF phát sinh chi phí thư viện chart: thay bằng <b>bảng xếp hạng có thanh nền</b> — số liệu không đổi.</div>
           </div>
         </div>
         <div class="card">
           <h3><span><span data-i18n="lo.struct">CƠ CẤU THỜI GIAN</span> <span class="optchip">ⓘ tuỳ chọn</span></span><span class="jp" id="loss-total">合計</span></h3>
           <div class="bd">
             <div class="donut-wrap">
-              <div class="donut" id="loss-donut"><div class="center"><div class="big" id="loss-oee">—</div><div class="cap">実稼働率</div></div></div>
+              <div class="donut" id="loss-donut"><div class="center"><div class="big" id="loss-oee">—</div><div class="cap" data-i18n="st.actrate">Vận hành thực</div></div></div>
               <div class="dlegend" id="loss-legend"></div>
             </div>
           </div>
@@ -228,6 +228,8 @@
         <span data-i18n="tab.output">Sản lượng &amp; mục tiêu</span><span class="specref">1-2</span></button>
       <button class="subtab" data-tab="tab-hist-agg" onclick="showTab('hist','tab-hist-agg')">
         <span data-i18n="tab.agg">Tổng hợp kỳ</span><span class="specref">1-1-7 · 1-2-6</span></button>
+      <button class="subtab" data-tab="tab-hist-prodlist" onclick="showTab('hist','tab-hist-prodlist')">
+        <span data-i18n="tab.prodlist">Tra cứu sản phẩm</span></button>
     </div>
 
     <!-- ===== TAB 1: SẢN LƯỢNG & MỤC TIÊU (phủ info 1-2) ===== -->
@@ -269,14 +271,13 @@
 
     <!-- ===== TAB 2: TỔNG HỢP KỲ (phủ info 1-1-7 & 1-2-6) ===== -->
     <div class="subpanel" data-tabgroup="hist" data-tab="tab-hist-agg" id="tab-hist-agg">
-      <div class="toolbar">
+      <div class="ctxbar">
+        <label class="ctx"><span data-i18n="ct.scope">Phạm vi:</span>
+          <select class="ctx-sel" id="agg-scope" onchange="renderAgg()"></select></label>
         <div class="period" id="agg-period">
           <button data-p="shift"   onclick="setAggPeriod('shift',this)"   data-i18n="pr.shift">Ca</button><button class="active" data-p="daily"   onclick="setAggPeriod('daily',this)"   data-i18n="pr.daily">Ngày</button><button data-p="weekly"  onclick="setAggPeriod('weekly',this)"  data-i18n="pr.weekly">Tuần</button><button data-p="monthly" onclick="setAggPeriod('monthly',this)" data-i18n="pr.monthly">Tháng</button>
         </div>
-        <label>From<input type="text" id="agg-from" value="10/05/2026"></label>
-        <label>To<input type="text" id="agg-to" value="16/05/2026"></label>
-        <label>PLC<select class="ctx-sel" id="agg-scope" onchange="renderAgg()"></select></label>
-        <button class="btn" onclick="renderAgg()" data-i18n="btn.search">Tìm</button>
+        <span class="ctx" id="agg-ctx"></span>
         <button class="btn" style="background:#7a7a7a" onclick="exportAggCSV()" data-i18n="btn.exportcsv">Xuất CSV</button>
       </div>
 
@@ -298,7 +299,7 @@
           <h3><span>XU HƯỚNG TỶ LỆ VẬN HÀNH THEO KỲ <span class="optchip">ⓘ tuỳ chọn</span></span><span class="jp">実稼働率 稼動率</span></h3>
           <div class="bd">
             <div class="barchart" id="agg-oee-chart"></div>
-            <div class="note" data-i18n-html="note.trend">Trục 0–100% · mục tiêu 85%. Nếu cắt trên WPF: đọc cột <b>実稼働率</b> ở bảng dưới.</div>
+            <div class="note" data-i18n-html="note.trend">Trục 0–100% · mục tiêu 85%.</div>
           </div>
         </div>
       </div>
@@ -320,13 +321,50 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== TAB 3: DANH SÁCH SẢN PHẨM (list serial đầu vào + NVL, click → truy xuất) ===== -->
+    <div class="subpanel" data-tabgroup="hist" data-tab="tab-hist-prodlist" id="tab-hist-prodlist">
+      <div class="ctxbar">
+        <label class="ctx"><span data-i18n="ct.scope">Phạm vi:</span>
+          <select class="ctx-sel" id="pl-scope" onchange="renderProdList()"></select></label>
+        <label class="ctx"><span data-i18n="pl.from">Từ</span>
+          <input type="date" class="ctx-date" id="pl-from" value="2026-04-08" onchange="renderProdList()"></label>
+        <label class="ctx"><span data-i18n="pl.to">Đến</span>
+          <input type="date" class="ctx-date" id="pl-to" value="2026-04-10" onchange="renderProdList()"></label>
+        <label class="ctx"><span data-i18n="th.serial">Serial</span>
+          <input type="text" class="ctx-sel" id="pl-serial" style="font-family:Consolas,monospace" data-i18n-ph="pl.serialph" placeholder="lọc theo serial…" oninput="renderProdList()"></label>
+        <label class="ctx"><span data-i18n="pl.lotf">Mã LOT</span>
+          <input type="text" class="ctx-sel" id="pl-lot" style="font-family:Consolas,monospace;width:130px" oninput="renderProdList()"></label>
+        <label class="ctx"><span data-i18n="pl.matf">Mã vật liệu</span>
+          <input type="text" class="ctx-sel" id="pl-mat" style="font-family:Consolas,monospace;width:130px" oninput="renderProdList()"></label>
+        <button class="btn" onclick="renderProdList()" data-i18n="btn.search">Tìm</button>
+        <button class="btn" style="background:#7a7a7a" onclick="exportProdListCSV()" data-i18n="btn.exportcsv">Xuất CSV</button>
+        <span class="ctx" id="pl-count" style="color:#666"></span>
+      </div>
+      <div class="card">
+        <div class="bd" style="padding:0">
+          <div class="tblwrap">
+            <table class="tbl">
+              <thead><tr>
+                <th class="k" data-i18n="th.no">STT</th>
+                <th data-i18n="th.serial">Serial</th>
+                <th data-i18n="pl.start">Bắt đầu</th><th data-i18n="pl.end">Kết thúc</th>
+                <th data-i18n="pl.nproc">Số công đoạn</th>
+                <th data-i18n="pl.lot">Mã LOT vật liệu</th>
+                <th data-i18n="pl.matname">Mã vật liệu</th>
+                <th data-i18n="pl.qty">Số lượng</th>
+                <th data-i18n="pl.result">Kết quả</th>
+              </tr></thead>
+              <tbody id="pl-rows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ============ PAGE 3b: SETTINGS ============ -->
   <div class="page" id="page-settings">
-    <div class="note-suggest" style="margin-bottom:10px">
-      <span class="ic">ⓘ</span><span><b data-i18n="set.mockup">Bản mockup</b> <span data-i18n="set.mockup2">— mọi thao tác nhập/lưu ở màn này chỉ phản hồi trên giao diện, không ghi vào hệ thống.</span></span>
-    </div>
 
     <div class="subtabs" data-tabgroup="set">
       <button class="subtab active" data-tab="tab-set-shift" onclick="showTab('set','tab-set-shift')">
@@ -384,7 +422,7 @@
             </table>
           </div>
           <div class="note" style="padding:11px 14px" data-i18n-html="note.target1">
-            ⓘ <b>Cột "Mục tiêu suy ra"</b> = 動作時間 (thời gian chạy) × 60 ÷ Cycle time kế hoạch — cập nhật ngay khi đổi Cycle.
+            ⓘ <b>Cột "Mục tiêu suy ra"</b> = thời gian chạy × 60 ÷ Cycle time kế hoạch — cập nhật ngay khi đổi Cycle.
             Cột <b>Sản lượng mục tiêu</b> nhập tay là số dùng tính <b>Tỷ lệ đạt</b> ở màn Lịch sử sản xuất.
           </div>
           <div class="note" style="padding:0 14px 11px" data-i18n-html="note.target2">
@@ -450,12 +488,6 @@
   <div class="page" id="page-trace">
     <!-- Hai số trong câu này do JS điền (fillTraceMeta) — đổi ngôn ngữ sẽ vẽ lại cả đoạn
          nên phải điền lại, xem setLang() trong js/13. -->
-    <div class="note-suggest" style="margin-bottom:10px" data-i18n-html="note.traceintro">
-      <span class="ic">ⓘ</span><span>Dữ liệu màn này là <b>data sản xuất thật</b> do Sumida gửi
-        (<b id="trace-src-rows">—</b> dòng MES export, <b id="trace-src-serials">—</b> serial) — không phải số minh hoạ.
-        Serial nào thiếu ở một công đoạn thì hiển thị đúng lý do, không ẩn đi.</span>
-    </div>
-
     <div class="trace-bar">
       <div class="row">
         <label><span class="cap"><span data-i18n="th.serial">Serial</span>:</span><input type="text" id="serial-input" value="260408A0165A0"
@@ -473,7 +505,6 @@
         <div class="grow"></div>
         <button class="btn danger" onclick="printTrace()" data-i18n="btn.exportpdf">Xuất báo cáo PDF</button>
       </div>
-      <div class="note" style="margin-top:8px" data-i18n-html="note.trace">ⓘ Truy vết <b>theo từng sản phẩm (serial-level)</b> — chốt 30/07/2026. Ô <b>Lô sản xuất</b> chỉ còn để tham chiếu / nhóm báo cáo, không phải khoá tra cứu.</div>
     </div>
 
     <div class="tr-meta" id="trace-meta"></div>
@@ -596,9 +627,18 @@
   </div>
 </div>
 
+<!-- Panel sản phẩm (mở tại chỗ khi click serial ở "Tra cứu sản phẩm" — không nhảy tab) -->
+<div class="mdl-bd" id="pl-bd" onclick="closeProdPanel()">
+  <div class="mdl" onclick="event.stopPropagation()">
+    <h3><span id="pl-panel-title">Sản phẩm</span><span class="x" onclick="closeProdPanel()">✕</span></h3>
+    <div class="mbd" id="pl-panel-body"></div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <!-- Dataset trích từ data thật của khách (sinh bằng script, KHÔNG sửa tay) + từ điển 4 ngôn ngữ -->
 <script src="js/00-mock-data.js"></script>
+<script src="js/00d-sample-data-augment.js"></script>
 <script src="js/00-i18n.js"></script>
 <script src="js/00b-i18n-data-labels.js"></script>
 <script src="js/00c-i18n-ui-text.js"></script>
@@ -619,6 +659,7 @@
 <script src="js/11-realtime-timeline.js"></script>
 <script src="js/12-tabs-image-lightbox-suggest.js"></script>
 <script src="js/13-language-and-clock.js"></script>
+<script src="js/15-production-history-list.js"></script>
 <script src="js/14-boot.js"></script>
 </body>
 </html>

@@ -41,7 +41,7 @@ const I18N = {
     "dt.tagtip":"Tag OPC UA trong IO MAP 260515", "dt.notag":"chưa có tag",
     "dt.notagtip":"IO MAP 260515 chưa có tag cho trường này",
     "mc.causes":"Nguyên nhân tổn thất (thời gian / 1 ca)",
-    "mc.trend":"Xu hướng 実稼働率 7 kỳ gần nhất",
+    "mc.trend":"Xu hướng tỷ lệ vận hành thực 7 kỳ gần nhất",
     "mc.links":"→ Liên kết: <b>Lịch sử lỗi</b> của {0} · <b>Truy xuất Serial</b> (mã công đoạn {1}) · <b>Chi tiết máy</b>.",
     "ct.lineoffperiod":"line nghỉ kỳ này", "ct.clickdetail":"Bấm để xem chi tiết {0}",
     "lo.lossword":"tổn thất", "set.ctunit":"giây / sản phẩm",
@@ -55,7 +55,7 @@ const I18N = {
     "dt.askmeaning":"Đề nghị Sumida cấp bảng nghĩa để đưa các số này vào truy vết.",
     "dt.notinmes":"công đoạn này KHÔNG xuất hiện trong MES export",
     "note.traceintro":"<span class=\"ic\">ⓘ</span><span>Dữ liệu màn này là <b>data sản xuất thật</b> do Sumida gửi (<b id=\"trace-src-rows\">—</b> dòng MES export, <b id=\"trace-src-serials\">—</b> serial) — không phải số minh hoạ. Serial nào thiếu ở một công đoạn thì hiển thị đúng lý do, không ẩn đi.</span>",
-    "note.target1":"ⓘ <b>Cột \"Mục tiêu suy ra\"</b> = 動作時間 (thời gian chạy) × 60 ÷ Cycle time kế hoạch — cập nhật ngay khi đổi Cycle. Cột <b>Sản lượng mục tiêu</b> nhập tay là số dùng tính <b>Tỷ lệ đạt</b> ở màn Lịch sử sản xuất.",
+    "note.target1":"ⓘ <b>Cột \"Mục tiêu suy ra\"</b> = thời gian chạy × 60 ÷ Cycle time kế hoạch — cập nhật ngay khi đổi Cycle. Cột <b>Sản lượng mục tiêu</b> nhập tay là số dùng tính <b>Tỷ lệ đạt</b> ở màn Lịch sử sản xuất.",
     "note.target2":"<span class=\"cfmchip\">ⓘ cần xác nhận</span> Đơn vị Cycle time là <b>giây / 1 sản phẩm</b> hay <b>giây / 1 lô 4 sản phẩm</b>? Data thật cho thấy line ra hàng theo <b>lô 4</b> (4 cavity), ~40 s/lô ≈ 10 s/pc.",
     "tr.note1":"ⓘ Serial này ghi nhận <b>{0}/{1}</b> công đoạn{2}. Độ phủ cao nhất trong toàn bộ data khách gửi là <b>9/14</b> công đoạn.",
     "tr.note1b":", trong đó <b>{0}</b> công đoạn có chạy nhưng <b>không đọc được mã</b>",
@@ -75,7 +75,7 @@ const I18N = {
     "ov.dayoff":"nghỉ",
     "note.rt":"<span class=\"cfmchip\">ⓘ cần bổ sung tag PLC</span> Rê chuột 1 đoạn để xem <b>từ mấy giờ → mấy giờ</b> · vạch <b style=\"color:#1E88E5\">NOW</b> = hiện tại · vạch đứt = ranh giới ca · tự làm mới 30 s. IO MAP hiện chỉ có <b class=\"la-tag\">Machine.Status</b> 3 giá trị — chưa tách được 5 trạng thái, xem <b>💡 Đề xuất</b>.",
     "note.pareto":"Nếu WPF phát sinh chi phí thư viện chart: thay bằng <b>bảng xếp hạng có thanh nền</b> — số liệu không đổi.",
-    "note.trend":"Trục 0–100% · mục tiêu 85%. Nếu cắt trên WPF: đọc cột <b>実稼働率</b> ở bảng dưới.",
+    "note.trend":"Trục 0–100% · mục tiêu 85%.",
     "note.shift":"ⓘ Thêm được mẫu ca giờ bất kỳ (VD S1 08:00–16:00). Mục tiêu &amp; Cycle time cài <b>theo từng PLC</b> ở tab kế bên.",
     "note.trace":"ⓘ Truy vết <b>theo từng sản phẩm (serial-level)</b> — chốt 30/07/2026. Ô <b>Lô sản xuất</b> chỉ còn để tham chiếu / nhóm báo cáo, không phải khoá tra cứu.",
     "note.gallery":"ⓘ 8 PLC có camera lưu ảnh: <b>PLC01 · 03 · 05 · 06 · 09 · 11 · 12 · 14</b>. Chính sách lưu: <b>chỉ ảnh NG</b>, 1 ảnh tại trạm phát hiện lỗi.",
@@ -91,6 +91,7 @@ const I18N = {
     "lo.click":"bấm 1 máy để xem chi tiết",
     "lo.heatnote":"Màu: đỏ <75% · vàng 75–85% · xanh ≥85% (mục tiêu 85%). Ô xám",
     "lo.heatnote2":"= máy không chạy kỳ đó.",
+    "lo.trendnote":"Mỗi cột = tỷ lệ vận hành thực toàn line từng kỳ (cùng ca). Màu: đỏ <75% · vàng 75–85% · xanh ≥85% (mục tiêu 85%).",
     "lo.totalloss":"Tổng tổn thất",
     "lo.topcause":"nguyên nhân lớn nhất:",
     "dt.trace":"TRUY XUẤT NGUỒN GỐC — mã định danh & vật liệu",
@@ -119,12 +120,16 @@ const I18N = {
     "ov.ovennote":"Lò giữ sản phẩm ~23 giờ — không đếm theo chu kỳ sản phẩm",
     "ov.formula":"Mục tiêu = thời gian chạy × 60 ÷ Cycle time kế hoạch",
     "tab.detail":"Chi tiết máy", "tab.loss":"Phân tích tổn thất",
-    "tab.output":"Sản lượng & mục tiêu", "tab.agg":"Tổng hợp kỳ",
+    "tab.output":"Sản lượng & mục tiêu", "tab.agg":"Tổng hợp kỳ", "tab.prodlist":"Tra cứu sản phẩm",
+    "pl.start":"Bắt đầu", "pl.end":"Kết thúc", "pl.nproc":"Số công đoạn", "pl.result":"Kết quả",
+    "pl.matinput":"Nguyên vật liệu đầu vào", "pl.journey":"Hành trình công đoạn", "pl.fulltrace":"Mở Truy xuất Serial đầy đủ",
+    "pl.lot":"Mã LOT vật liệu", "pl.matname":"Mã vật liệu", "pl.lotf":"Mã LOT", "pl.matf":"Mã vật liệu", "pl.qty":"Số lượng", "pl.from":"Từ", "pl.to":"Đến",
+    "pl.serialph":"lọc theo serial…", "pl.empty":"Không có sản phẩm khớp bộ lọc.", "pl.unit":"sản phẩm",
     "tab.shift":"Ca làm việc", "tab.target":"Mục tiêu & Cycle time",
     /* 5 trạng thái thời gian + 2 tổng */
     "st.wait":"Thời gian chờ", "st.run":"Thời gian chạy", "st.error":"Thời gian dừng lỗi",
     "st.adj":"Thời gian điều chỉnh", "st.check":"Kiểm tra trước khi vận hành lại",
-    "st.idle":"Máy không hoạt động", "st.actual":"Thời gian vận hành thực",
+    "st.idle":"Máy không hoạt động", "st.actual":"Thời gian vận hành thực", "st.actrate":"Vận hành thực",
     "st.planned":"Thời gian kế hoạch (cả ca)", "st.loss":"Thời gian tổn thất",
     "tl.future":"Chưa tới",
     /* chỉ số sản xuất */
@@ -192,7 +197,7 @@ const I18N = {
     "dt.askmeaning":"We ask Sumida to provide a definition table so these values can be used in traceability.",
     "dt.notinmes":"this process does NOT appear in the MES export",
     "note.traceintro":"<span class=\"ic\">ⓘ</span><span>This screen uses <b>real production data</b> supplied by Sumida (<b id=\"trace-src-rows\">—</b> MES export rows, <b id=\"trace-src-serials\">—</b> serials) — not illustrative figures. Where a serial is missing at a process, the actual reason is shown rather than hidden.</span>",
-    "note.target1":"ⓘ The <b>\"Derived target\" column</b> = 動作時間 (operating time) × 60 ÷ planned cycle time — updates as soon as the cycle time changes. The manually entered <b>Target output</b> column is the figure used for the <b>achievement rate</b> on the Production History screen.",
+    "note.target1":"ⓘ The <b>\"Derived target\" column</b> = operating time × 60 ÷ planned cycle time — updates as soon as the cycle time changes. The manually entered <b>Target output</b> column is the figure used for the <b>achievement rate</b> on the Production History screen.",
     "note.target2":"<span class=\"cfmchip\">ⓘ needs confirmation</span> Is the cycle time unit <b>seconds / 1 piece</b> or <b>seconds / 1 batch of 4 pieces</b>? The real data shows the line producing in <b>batches of 4</b> (4 cavities), ~40 s/batch ≈ 10 s/pc.",
     "tr.note1":"ⓘ This serial was recorded at <b>{0}/{1}</b> processes{2}. The highest coverage in the whole data set supplied is <b>9/14</b> processes.",
     "tr.note1b":", of which <b>{0}</b> processes did run but <b>could not read the code</b>",
@@ -212,7 +217,7 @@ const I18N = {
     "ov.dayoff":"off",
     "note.rt":"<span class=\"cfmchip\">ⓘ PLC tag to be added</span> Hover a segment to see <b>from when → to when</b> · the <b style=\"color:#1E88E5\">NOW</b> line = current time · dashed line = shift boundary · auto-refresh every 30 s. The IO MAP currently only has <b class=\"la-tag\">Machine.Status</b> with 3 values — the 5 states cannot be separated yet, see <b>💡 Proposal</b>.",
     "note.pareto":"If a chart library incurs a cost in WPF: replace with a <b>ranking table with background bars</b> — the figures stay the same.",
-    "note.trend":"Axis 0–100% · target 85%. If cut from WPF: read the <b>実稼働率</b> column in the table below.",
+    "note.trend":"Axis 0–100% · target 85%.",
     "note.shift":"ⓘ Any shift pattern can be added (e.g. S1 08:00–16:00). Target &amp; cycle time are set <b>per PLC</b> on the next tab.",
     "note.trace":"ⓘ Traceability is <b>per product (serial-level)</b> — decided 30/07/2026. The <b>Production lot</b> field is now only for reference / report grouping, not a lookup key.",
     "note.gallery":"ⓘ 8 PLCs have cameras storing images: <b>PLC01 · 03 · 05 · 06 · 09 · 11 · 12 · 14</b>. Retention policy: <b>NG images only</b>, 1 image at the station that detected the defect.",
@@ -228,6 +233,7 @@ const I18N = {
     "lo.click":"click a machine for detail",
     "lo.heatnote":"Colour: red <75% · amber 75–85% · green ≥85% (target 85%). Grey cell",
     "lo.heatnote2":"= machine not running in that period.",
+    "lo.trendnote":"Each bar = whole-line operating rate per period (same shift). Colour: red <75% · amber 75–85% · green ≥85% (target 85%).",
     "lo.totalloss":"Total loss",
     "lo.topcause":"top cause:",
     "dt.trace":"TRACEABILITY — identifiers & material",
@@ -256,11 +262,15 @@ const I18N = {
     "ov.ovennote":"Oven holds products ~23 h — not counted per product cycle",
     "ov.formula":"Target = operating minutes × 60 ÷ planned cycle time",
     "tab.detail":"Equipment detail", "tab.loss":"Loss analysis",
-    "tab.output":"Output & target", "tab.agg":"Period aggregation",
+    "tab.output":"Output & target", "tab.agg":"Period aggregation", "tab.prodlist":"Product lookup",
+    "pl.start":"Start", "pl.end":"End", "pl.nproc":"Processes", "pl.result":"Result",
+    "pl.matinput":"Input material", "pl.journey":"Process journey", "pl.fulltrace":"Open full Serial Trace",
+    "pl.lot":"Material lot no.", "pl.matname":"Material code", "pl.lotf":"Lot no.", "pl.matf":"Material code", "pl.qty":"Quantity", "pl.from":"From", "pl.to":"To",
+    "pl.serialph":"filter by serial…", "pl.empty":"No products match the filter.", "pl.unit":"products",
     "tab.shift":"Shift schedule", "tab.target":"Target & cycle time",
     "st.wait":"Waiting time", "st.run":"Operating time", "st.error":"Error stop time",
     "st.adj":"Adjustment time", "st.check":"Pre-operation check time",
-    "st.idle":"Machine not operating", "st.actual":"Actual operating time",
+    "st.idle":"Machine not operating", "st.actual":"Actual operating time", "st.actrate":"Operating rate",
     "st.planned":"Planned operating time (shift)", "st.loss":"Loss time",
     "tl.future":"Not yet reached",
     "pd.input":"Units in", "pd.ok":"Good (OK)", "pd.ng":"Defective (NG)",
@@ -345,7 +355,7 @@ const I18N = {
     "ov.dayoff":"休止",
     "note.rt":"<span class=\"cfmchip\">ⓘ PLCタグの追加が必要</span> 区間にマウスを乗せると <b>何時から→何時まで</b> を表示 · <b style=\"color:#1E88E5\">NOW</b> 線 = 現在時刻 · 破線 = シフト境界 · 30秒ごとに自動更新。IO MAP には現在 <b class=\"la-tag\">Machine.Status</b> の3値しかなく、5状態に分離できません。<b>💡 提案</b> を参照。",
     "note.pareto":"WPF でチャートライブラリの費用が発生する場合: <b>背景バー付きランキング表</b> で代替 — 数値は変わりません。",
-    "note.trend":"軸 0–100% · 目標 85%。WPF で削る場合: 下表の <b>実稼働率</b> 列を参照。",
+    "note.trend":"軸 0–100% · 目標 85%。",
     "note.shift":"ⓘ 任意のシフトパターンを追加できます (例 S1 08:00–16:00)。目標 &amp; サイクルタイムは隣のタブで <b>PLC毎</b> に設定します。",
     "note.trace":"ⓘ トレーサビリティは <b>製品単位 (シリアル単位)</b> — 2026/07/30 決定。<b>製造ロット</b> 欄は参照・帳票のグループ用のみで、検索キーではありません。",
     "note.gallery":"ⓘ 画像を保存するカメラ付きPLCは8台: <b>PLC01 · 03 · 05 · 06 · 09 · 11 · 12 · 14</b>。保存方針: <b>NG画像のみ</b>、検出した工程で1枚。",
@@ -361,6 +371,7 @@ const I18N = {
     "lo.click":"設備をクリックで詳細",
     "lo.heatnote":"色: 赤 <75% · 黄 75–85% · 緑 ≥85% (目標 85%)。灰色セル",
     "lo.heatnote2":"= その期間は稼働なし。",
+    "lo.trendnote":"各棒 = 期間ごとのライン実稼働率（同一シフト）。色: 赤 <75% · 黄 75–85% · 緑 ≥85% (目標 85%)。",
     "lo.totalloss":"ロス合計",
     "lo.topcause":"最大要因:",
     "dt.trace":"トレーサビリティ — 識別コード・材料",
@@ -393,6 +404,12 @@ const I18N = {
     "tab.loss":"稼動状況 (ロス解析)",            // info 1. ロス解析 + 1-1
     "tab.output":"生産状況",                    // info 1-2
     "tab.agg":"情報収集",                       // info 1-1-7 / 1-2-6
+    "tab.prodlist":"製品照会",
+    "pl.start":"開始", "pl.end":"終了", "pl.nproc":"工程数", "pl.result":"結果",
+    "pl.matinput":"投入材料", "pl.journey":"工程履歴", "pl.fulltrace":"シリアル追跡を開く",
+    "pl.lot":"材料ロット番号", "pl.matname":"材料コード", "pl.lotf":"ロット番号", "pl.matf":"材料コード",
+    "pl.qty":"数量", "pl.from":"開始日", "pl.to":"終了日",
+    "pl.serialph":"シリアルで絞込…", "pl.empty":"条件に一致する製品がありません。", "pl.unit":"製品",
     "tab.shift":"shift入力",                    // info 1-4-1
     "tab.target":"目標生産数量・計画Cycleタイム入力", // info 1-4-2 + 1-4-3
                     // TODO review JA
@@ -404,6 +421,7 @@ const I18N = {
     "st.check":"始業前点検時間 (始業前点検中)",
     "st.idle":"非稼働時間",                     // TODO review JA
     "st.actual":"実稼働時間",                    // info 1-1-6
+    "st.actrate":"実稼働率",
     "st.planned":"計画稼動時間",
     "st.loss":"ロス時間",
     "tl.future":"未到達",                       // TODO review JA
@@ -472,7 +490,7 @@ const I18N = {
     "dt.askmeaning":"建议 Sumida 提供字段含义表，以便将这些数值纳入追溯。",                              // TODO review ZH
     "dt.notinmes":"该工序未出现在 MES 导出中",                    // TODO review ZH
     "note.traceintro":"<span class=\"ic\">ⓘ</span><span>本页数据为 Sumida 提供的 <b>真实生产数据</b> (<b id=\"trace-src-rows\">—</b> 行 MES 导出、<b id=\"trace-src-serials\">—</b> 个序列号) — 并非示意数字。某工序缺少序列号时，会如实显示原因而不隐藏。</span>",
-    "note.target1":"ⓘ <b>「推算目标」列</b> = 動作時間 (运行时间) × 60 ÷ 计划节拍时间 — 修改节拍后立即更新。手工录入的 <b>目标产量</b> 列，是生产履历页面计算 <b>达成率</b> 所用的数值。",
+    "note.target1":"ⓘ <b>「推算目标」列</b> = 运行时间 × 60 ÷ 计划节拍时间 — 修改节拍后立即更新。手工录入的 <b>目标产量</b> 列，是生产履历页面计算 <b>达成率</b> 所用的数值。",
     "note.target2":"<span class=\"cfmchip\">ⓘ 需确认</span> 节拍时间的单位是 <b>秒 / 1件</b> 还是 <b>秒 / 1批4件</b>？真实数据显示产线按 <b>4件一批</b> (4腔) 出料，约40秒/批 ≈ 10秒/件。",
     "tr.note1":"ⓘ 该序列号在 <b>{0}/{1}</b> 道工序有记录{2}。所提供数据中最高覆盖为 <b>9/14</b> 道工序。",
     "tr.note1b":"，其中 <b>{0}</b> 道工序确实运行但 <b>未能读取到码</b>",
@@ -492,7 +510,7 @@ const I18N = {
     "ov.dayoff":"停产",
     "note.rt":"<span class=\"cfmchip\">ⓘ 需补充 PLC 标签</span> 将鼠标移到某段可查看 <b>从几点 → 到几点</b> · <b style=\"color:#1E88E5\">NOW</b> 线 = 当前时刻 · 虚线 = 班次分界 · 每 30 秒自动刷新。IO MAP 目前只有 <b class=\"la-tag\">Machine.Status</b> 的 3 个值 — 尚无法拆分 5 种状态，见 <b>💡 建议</b>。",
     "note.pareto":"若在 WPF 中使用图表库会产生费用: 可改为 <b>带背景条的排名表</b> — 数据不变。",
-    "note.trend":"坐标轴 0–100% · 目标 85%。若在 WPF 中裁剪: 读取下表的 <b>実稼働率</b> 列。",
+    "note.trend":"坐标轴 0–100% · 目标 85%。",
     "note.shift":"ⓘ 可添加任意班次模板 (例 S1 08:00–16:00)。目标 &amp; 节拍时间在旁边的标签页中 <b>按每台 PLC</b> 设置。",
     "note.trace":"ⓘ 追溯为 <b>按单件产品 (serial 级)</b> — 2026/07/30 确定。<b>生产批次</b> 栏仅用于参考 / 报表分组，不是查询键。",
     "note.gallery":"ⓘ 有 8 台 PLC 配相机保存图片: <b>PLC01 · 03 · 05 · 06 · 09 · 11 · 12 · 14</b>。保存策略: <b>仅 NG 图片</b>，在检出工序拍 1 张。",
@@ -508,6 +526,7 @@ const I18N = {
     "lo.click":"点击设备查看详情",
     "lo.heatnote":"颜色: 红 <75% · 黄 75–85% · 绿 ≥85% (目标 85%)。灰色格",
     "lo.heatnote2":"= 该期间未运行。",
+    "lo.trendnote":"每根柱 = 各期整线实稼动率（同一班次）。颜色: 红 <75% · 黄 75–85% · 绿 ≥85% (目标 85%)。",
     "lo.totalloss":"损失合计",
     "lo.topcause":"最大原因:",
     "dt.trace":"追溯 — 识别码与材料",
@@ -540,12 +559,18 @@ const I18N = {
     "tab.loss":"损失分析",                     // TODO review ZH
     "tab.output":"产量与目标",                 // TODO review ZH
     "tab.agg":"信息汇总",                      // TODO review ZH
+    "tab.prodlist":"产品查询",
+    "pl.start":"开始", "pl.end":"结束", "pl.nproc":"工序数", "pl.result":"结果",
+    "pl.matinput":"投入材料", "pl.journey":"工序履历", "pl.fulltrace":"打开完整序列号追溯",
+    "pl.lot":"材料批次号", "pl.matname":"材料编号", "pl.lotf":"批次号", "pl.matf":"材料编号",
+    "pl.qty":"数量", "pl.from":"开始日期", "pl.to":"结束日期",
+    "pl.serialph":"按序列号筛选…", "pl.empty":"没有符合筛选条件的产品。", "pl.unit":"个产品",
     "tab.shift":"班次",                        // TODO review ZH
     "tab.target":"目标与节拍时间",             // TODO review ZH
                        // TODO review ZH
     "st.wait":"待机时间",   "st.run":"运行时间",  "st.error":"故障停机时间",   // TODO review ZH
     "st.adj":"调整时间",    "st.check":"作业前点检时间",                      // TODO review ZH
-    "st.idle":"非稼动时间", "st.actual":"实际稼动时间", "st.planned":"计划稼动时间", // TODO review ZH
+    "st.idle":"非稼动时间", "st.actual":"实际稼动时间", "st.actrate":"实际稼动率", "st.planned":"计划稼动时间", // TODO review ZH
     "st.loss":"损失时间",                                                     // TODO review ZH
     "tl.future":"未到达",                                                     // TODO review ZH
     "pd.input":"投入数量", "pd.ok":"OK排出数量", "pd.ng":"NG排出数量",         // TODO review ZH

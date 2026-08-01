@@ -10,14 +10,19 @@ function renderTsRows(idx, nShift){
         <div class="ts-bar" style="background:#E0E0E0;justify-content:center;color:#777;font-weight:700">${T('ct.outscope')}</div>
         <div class="oee" style="color:#aaa">—</div></div>`;
     }
-    const t=LOSS_TS[i], tot=ACTUAL_MIN;
+    const t=LOSS_TS[i], idleV=LOSS_IDLE[i], plan=ACTUAL_MIN+idleV;
+    /* Mẫu số bề rộng = 実稼働(425) + downtime riêng của máy: 5 trạng thái + "Máy không
+       hoạt động" (idleV, khác nhau theo máy) khớp trọn thanh. Tổng phút 14 thanh =
+       Σ(425+idleV) = 5950+770 = 112h, khớp thanh toàn line. data-pct tính theo 実稼働. */
     const segs=[0,1,2,3,4].map(j=>{
       const v=t[j]; if(v===0) return '';
-      const w=v/tot*100;
+      const w=v/plan*100;
       return `<div class="seg" style="width:${w}%;${w<3?'min-width:6px;':''}background:${ST_HEX[j]};color:${ST_TXT[j]}"
-        data-j="${j}" data-dur="${dur(v*nShift)}" data-pct="${w.toFixed(1)}">${dur(v*nShift)}</div>`;
-    }).join('');
-    const o=Math.round(t[1]/tot*100);
+        data-j="${j}" data-dur="${dur(v*nShift)}" data-pct="${(v/ACTUAL_MIN*100).toFixed(1)}">${dur(v*nShift)}</div>`;
+    }).join('')
+    + `<div class="seg" style="width:${idleV/plan*100}%;background:var(--st-idle);color:#fff"
+        data-j="5" data-dur="${dur(idleV*nShift)}" data-pct="—">${dur(idleV*nShift)}</div>`;
+    const o=Math.round(t[1]/ACTUAL_MIN*100);
     return `<div class="ts-row" onclick="openMachine(${i})" title="${TF('ct.clickdetail', p.code)}">
       <div class="name">${p.code}<small>${p.mes}</small></div>
       <div class="ts-bar">${segs}</div>
@@ -71,8 +76,13 @@ function renderHeat(){
   }).join('');
   document.getElementById('loss-heat').innerHTML=`<table class="heat">${head}${body}</table>`;
 }
-function renderPareto(sum, actual){
-  const cats=[0,2,3,4].map(j=>({k:T(ST_KEYS[j]), v:sum[j], c:ST_HEX[j]})).sort((a,b)=>b.v-a.v);
+function renderPareto(sum, actual, idle){
+  /* Xếp hạng nguyên nhân tổn thất: chờ/lỗi/điều chỉnh/kiểm tra (bỏ 'chạy'=1) +
+     "Máy không hoạt động" (idle) — coi là tổn thất khả dụng (Availability loss).
+     Chỉ ảnh hưởng bảng Pareto; công thức 実稼働率/OEE ở renderLoss giữ nguyên. */
+  const cats=[0,2,3,4].map(j=>({k:T(ST_KEYS[j]), v:sum[j], c:ST_HEX[j]}))
+    .concat([{k:T('st.idle'), v:idle, c:'var(--st-idle)'}])
+    .sort((a,b)=>b.v-a.v);
   const total=cats.reduce((s,x)=>s+x.v,0)||1, max=cats[0].v||1;
   document.getElementById('loss-pareto').innerHTML=cats.map(x=>{
     const share=(x.v/total*100).toFixed(0);
@@ -81,8 +91,11 @@ function renderPareto(sum, actual){
       <div class="par-bar"><div class="fill" style="width:${x.v/max*100}%;background:${x.c}"></div></div>
       <div class="pval">${dur(x.v)} · ${share}%</div></div>`;
   }).join('');
+  /* Idle nằm ngoài 実稼働 → khi tính nó là tổn thất, mẫu số tham chiếu của dòng
+     chú thích phải là 計画稼動 (actual+idle) mới có nghĩa; công thức 実稼働率/OEE
+     ở renderLoss không đổi. */
   document.getElementById('loss-pareto-note').innerHTML =
-    `${T('lo.totalloss')} <b>${dur(total)}</b> / ${T('st.actual')} ${dur(actual)} · ${T('lo.topcause')} <b>${cats[0].k}</b> (${(cats[0].v/total*100).toFixed(0)}%).`;
+    `${T('lo.totalloss')} <b>${dur(total)}</b> / ${T('st.planned')} ${dur(actual+idle)} · ${T('lo.topcause')} <b>${cats[0].k}</b> (${(cats[0].v/total*100).toFixed(0)}%).`;
 }
 function renderDonut(sum, idle, planned, A){
   let acc=0; const pc=v=>v/planned*100;

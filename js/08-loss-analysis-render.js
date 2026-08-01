@@ -8,7 +8,7 @@ let lossPeriod='shift', lossDate=_lc.date, lossShift=_lc.shift, lossWeekOff=0, l
 function fillScopeSelects(){
   const opts = `<option value="all">Toàn line (14 PLC)</option>` +
     PLC_MES.map((p,i)=>`<option value="${i}">${p.code} — ${p.stage}</option>`).join('');
-  ['loss-scope','prod-scope'].forEach(id=>{
+  ['loss-scope','prod-scope','pl-scope'].forEach(id=>{
     const el=document.getElementById(id); if(!el) return;
     const keep = el.value; el.innerHTML = opts; if(keep) el.value = keep;
   });
@@ -82,7 +82,7 @@ function renderLoss(){
   const P = periodShifts(lossPeriod, lossDate, lossShift, lossWeekOff, lossMonthOff);
   const {sum, nMachine, idx} = lossAgg(scope, P.n);
   const actual  = sum.reduce((a,b)=>a+b,0);
-  const idle    = IDLE_MIN * P.n * nMachine;
+  const idle    = idx.reduce((a,i)=>a+LOSS_IDLE[i],0) * P.n;   // downtime per-máy (LOSS_IDLE) — nguồn duy nhất
   const planned = actual + idle;
   const scopeLbl = scope==='all' ? `${T('ct.allline').replace('14',nMachine)}` : `${PLC_MES[Number(scope)].code} — ${PLC_MES[Number(scope)].stage}`;
 
@@ -163,7 +163,7 @@ function renderLoss(){
 
   renderTsRows(idx, P.n);
   renderHeat();
-  renderPareto(sum, actual);
+  renderPareto(sum, actual, idle);
   renderDonut(sum, idle, planned, A);
   renderLossTrend();
   wireTsTip();

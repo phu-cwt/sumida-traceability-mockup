@@ -37,7 +37,7 @@
     --st-future:#CFCFCF;  /* chưa xảy ra (ca chưa bắt đầu) — không phải trạng thái máy */
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:"Segoe UI","Noto Sans",Arial,sans-serif;font-size:14px}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:"Segoe UI","Noto Sans",Arial,sans-serif;font-size:14px;font-variant-numeric:tabular-nums;-moz-font-feature-settings:"tnum";font-feature-settings:"tnum"}
 
   /* ===== SCROLLBAR (mặc định mảnh; rê chuột vào vùng cuộn mới dày lên — giống 25T01) ===== */
   *{scrollbar-width:thin;scrollbar-color:#bdbdbd #ffffff}

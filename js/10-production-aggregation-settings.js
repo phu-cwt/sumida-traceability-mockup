@@ -80,13 +80,20 @@ function renderProd(){
 }
 
 /* ══════════ MÀN TỔNG HỢP KỲ (info 1-1-7 & 1-2-6) ══════════ */
-let aggPeriod='daily';
+/* State kỳ RIÊNG của tab Tổng hợp (mirror tab Sản lượng) — để 3 tab dùng chung mẫu
+   điều khiển ctxHtml: Phạm vi → nút Ca/Ngày/Tuần/Tháng → điều hướng 1 ngày + chọn ca. */
+let aggPeriod='daily', aggDate=today0(), aggShift=currentShiftId(), aggWeekOff=0, aggMonthOff=5;
 function setAggPeriod(p, btn){
   aggPeriod=p;
   btn.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
   btn.classList.add('active');
   renderAgg();
 }
+function stepAggDate(n){ aggDate=new Date(aggDate); aggDate.setDate(aggDate.getDate()+n); renderAgg(); }
+function setAggDate(v){ if(v){ aggDate=dateFromIso(v); renderAgg(); } }
+function setAggShift(v){ aggShift=v; renderAgg(); }
+function stepAggWeek(n){ aggWeekOff+=n; renderAgg(); }
+function stepAggMonth(n){ aggMonthOff=Math.max(0,Math.min(MONTHS.length-1,aggMonthOff+n)); renderAgg(); }
 /* Suy từ CÙNG bộ số của 2 màn trên (LOSS_TS + PROD_CNT) để 3 màn không lệch nhau. */
 function aggRows(){
   const scope=document.getElementById('agg-scope');
@@ -97,18 +104,18 @@ function aggRows(){
   const out=[];
   if(aggPeriod==='shift'){
     for(let k=5;k>=0;k--){
-      const d=new Date(lossDate); d.setDate(d.getDate()-Math.floor(k/2));
+      const d=new Date(aggDate); d.setDate(d.getDate()-Math.floor(k/2));
       const s=SHIFT_LIST[k%2]; if(!lineRuns(s,d)) continue;
       out.push(mk(`${s}<br>${ddmm(d)}`, 1, k));
     }
   } else if(aggPeriod==='daily'){
-    for(let k=6;k>=0;k--){ const d=new Date(lossDate); d.setDate(d.getDate()-k);
+    for(let k=6;k>=0;k--){ const d=new Date(aggDate); d.setDate(d.getDate()-k);
       const n=shiftsInDay(d); if(!n) continue; out.push(mk(ddmm(d), n, k)); }
   } else if(aggPeriod==='weekly'){
-    for(let k=6;k>=0;k--){ const w=weekDates(lossWeekOff-k); const n=shiftsInWeek(lossWeekOff-k);
+    for(let k=6;k>=0;k--){ const w=weekDates(aggWeekOff-k); const n=shiftsInWeek(aggWeekOff-k);
       if(!n) continue; out.push(mk(`${ddmm(w[0])}–${ddmm(w[6])}`, n, k)); }
   } else {
-    for(let k=6;k>=0;k--){ const mi=lossMonthOff-k; if(mi<0) continue;
+    for(let k=6;k>=0;k--){ const mi=aggMonthOff-k; if(mi<0) continue;
       out.push(mk(MONTHS[mi], shiftsInMonth(mi), k)); }
   }
   function mk(lab, nShift, k){
@@ -125,6 +132,11 @@ function aggRows(){
 let aggCur=[];
 function renderAgg(){
   const chart=document.getElementById('agg-chart'); if(!chart) return;
+  const ctx=document.getElementById('agg-ctx');
+  if(ctx) ctx.innerHTML = ctxHtml(aggPeriod, {
+    stepDate:'stepAggDate', setDate:'setAggDate', setShift:'setAggShift',
+    stepWeek:'stepAggWeek', stepMonth:'stepAggMonth',
+    date:aggDate, shift:aggShift, weekOff:aggWeekOff, monthOff:aggMonthOff });
   const A = aggRows(); aggCur = A;
   const jp = {shift:'シフト別', daily:'日別', weekly:'週別', monthly:'月別'}[aggPeriod];
   document.getElementById('agg-chart-jp').textContent = jp;

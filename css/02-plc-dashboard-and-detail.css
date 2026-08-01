@@ -45,9 +45,9 @@
      của Top Page cao bằng nhau. `height:100%` khiến các dòng chia đều phần dư. */
   .ov-prod table.tbl{height:100%}
   .ov-prod table.tbl th{font-size:13px;padding:9px 6px}
-  .ov-prod table.tbl td{font-size:14px}
-  .ov-prod table.tbl td.l{font-size:14.5px}
-  .ov-prod table.tbl td .mono{font-size:12.5px}
+  .ov-prod table.tbl td{font-size:13px}
+  .ov-prod table.tbl td.l{font-size:13px}
+  .ov-prod table.tbl td .mono{font-size:12px}
   .ov-prod table.tbl tbody tr{cursor:pointer}
   .ov-prod table.tbl tbody tr:hover td{background:#E8F0FE}
   .ov-prod tr.ov-alarm td{background:#FFEAEA}
@@ -109,7 +109,7 @@
   /* Bảng bộ đếm: gộp "Đang chạy" + "Lần chạy trước" thành 2 cột giá trị */
   /* Bó bề ngang: 3 cột trải hết 1340px thì số nằm rời rạc, mắt phải quét ngang xa */
   .cnt-table{width:100%;max-width:820px;border-collapse:collapse;font-size:13px}
-  .cnt-table th{background:#EDEDED;padding:5px 12px;font-size:12px;border-bottom:1px solid #ccc;text-align:right}
+  .cnt-table th{background:#EDEDED;padding:5px 12px;font-size:13px;border-bottom:1px solid #ccc;text-align:right}
   .cnt-table th.k{text-align:left}
   .cnt-table th.prev,.cnt-table td.prev{color:#777;background:#FAFAFA}
   .cnt-table td{padding:4px 12px;border-bottom:1px solid #eee;text-align:right}
