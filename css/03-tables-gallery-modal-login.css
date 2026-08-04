@@ -121,6 +121,7 @@
   .login-card .lc-close:hover{opacity:.7}
   .login-card .lc-logo{text-align:center;margin-top:24px;margin-bottom:14px}
   .login-card .lc-logo img{height:30px;width:auto}
+  .login-card .lc-logo .lc-sev{font-size:34px;font-weight:900;color:#C9272F;letter-spacing:1px}
   .login-card .lc-title{text-align:center;font-size:18px;font-weight:700;color:#333;margin:0 0 28px}
   .login-card .lc-field{display:flex;align-items:center;gap:12px;border-bottom:1.5px solid #ccc;padding:10px 0;margin-bottom:22px}
   .login-card .lc-field svg{flex-shrink:0;color:#333}

@@ -58,6 +58,8 @@
   .brand{display:flex;align-items:center;gap:12px;font-weight:700;line-height:1}
   .brand-nittoku-box{display:inline-flex;align-items:center;justify-content:center}
   .brand-nittoku{height:35px;width:auto;display:block;mix-blend-mode:multiply}
+  /* Wordmark SEV thay logo NITTOKU */
+  .brand-sev{font-size:44px;font-weight:900;color:#C9272F;letter-spacing:1px;line-height:1}
   .login-logo{height:90px;width:auto;display:block;margin:0 auto 4px}
   .brand .sysname{font-size:45px;color:#1B1B1B;font-weight:900;letter-spacing:.2px;line-height:1}
   .spacer{flex:1}
